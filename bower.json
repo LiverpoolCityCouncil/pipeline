@@ -1,0 +1,23 @@
+{
+  "name": "pipeline",
+  "version": "1.0.0",
+  "homepage": "https://github.com/oddjones/pipeline",
+  "authors": [
+    "Dominic Jones <dom@oddjones.com>"
+  ],
+  "description": "a gantt chart front end for trello",
+  "main": "server.js",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "license": "MIT",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}
