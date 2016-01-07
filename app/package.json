@@ -1,0 +1,19 @@
+{
+  "name": "pipeline",
+  "version": "1.0.0",
+  "description": "A gantt chart front end for trello",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Dominic Jones",
+  "license": "ISC",
+  "dependencies": {
+    "async": "^1.5.1",
+    "body-parser": "^1.14.2",
+    "bower": "^1.7.2",
+    "express": "^4.13.3",
+    "grunt": "^0.4.5",
+    "request": "^2.67.0"
+  }
+}

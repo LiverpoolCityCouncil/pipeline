@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html ng-app="pipeline">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>PIPELINE (local MEAN)</title>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="all">
+  <link rel="stylesheet" href="css/harvest.css" type="text/css" media="all">
+  <link rel="stylesheet" href="css/pipeline.css" type="text/css" media="all">
+  <!--clientside-->
+  <script src="js/jquery.min.js"></script>
+
+  <!--avatars-->
+  <script src="js/md5.js"></script>
+  <script src="js/avatar.js"></script>
+  <!--MVC-->
+    <script src="js/angular.min.js"></script>
+    <script src="js/ui-bootstrap.min.js"></script>
+    <script src="js/ui-bootstrap-tpls.min.js"></script>
+    <script src="js/ng-lodash.min.js"></script>
+    <script src="js/app(refactor1).js"></script>
+    <script src="js/rootscope_functions.js"></script>
+    <script src="js/assignProjectCtrl.js"></script>
+    <script src="js/assignStaffCtrl.js"></script>
+    <script src="js/boardCtrl.js"></script>
+    <script src="js/editAssignmentCtrl.js"></script>
+    <script src="js/editProjectCtrl.js"></script>
+    <script src="js/addMilestoneCtrl.js"></script>
+</head>
+<body style="cursor: auto;" >
+  <main >
+  <!--
+                                           
+ #    # ######   ##   #####  ###### #####  
+ #    # #       #  #  #    # #      #    # 
+ ###### #####  #    # #    # #####  #    # 
+ #    # #      ###### #    # #      #####  
+ #    # #      #    # #    # #      #   #  
+ #    # ###### #    # #####  ###### #    # 
+
+  --><header>
+    <div class="header-left">
+      <h1 class="header-company-name">
+        <a >
+          Pipeline
+        </a>
+      </h1>
+      <div class="dropdown-button header-button" ng-controller="boardCtrl">
+        <span dropdown on-toggle="toggled(open)">
+      <a class="dropdown-link" href id="simple-dropdown" dropdown-toggle>
+        Boards<i class="icon" data-icon="arrow-down-white"></i>
+
+      </a>
+      <ul class="dropdown-menu" aria-labelledby="simple-dropdown">
+        <li ng-repeat="board in boards">
+          <a href>{{board}}</a>
+        </li>
+      <li role="separator" class="divider"></li>
+      <li><a >config</a>
+      </ul>
+    </span>
+    </div>
+
+
+
+  </div>
+  <nav class="header-right">
+    <!--<a class=" billing-header-message test-admin-trial-message" href="https://forecastapp.com/95636/upgrade">
+      28 days left in trial — <strong>Upgrade</strong>
+    </a>-->
+
+    <a class="header-button"  >
+      Help
+    </a>
+    <div class="dropdown-button user-dropdown"><a  class="dropdown-link"  >
+      <img   src="img/67d71aa79e2dafb92f1a44a6ad8d113a.jpg" alt="Dominic Jones">
+      <i class="icon" data-icon="arrow-down-white"></i>
+    </a>
+    <div class="dropdown" >
+      <div class="user-information">
+        <strong>Dominic Jones</strong>
+        LDL
+      </div>
+      <a  >My Profile</a>
+      <a href="javascript:void(0)" >Sign Out</a>
+    </div>
+  </div>
+</nav>
+</header>
+<a  class="send-feedback" target="_blank">Send Feedback</a>
+<ul class="flash">
+</ul>
+<div class=" timeline-view" ng-controller="TrelloController">
+<!--
+                                                  
+ #####    ##   #   #        ####  #####  # #####  
+ #    #  #  #   # #        #    # #    # # #    # 
+ #    # #    #   #   ##### #      #    # # #    # 
+ #    # ######   #         #  ### #####  # #    # 
+ #    # #    #   #         #    # #   #  # #    # 
+ #####  #    #   #          ####  #    # # #####  
+
+This is just "graph paper" - the actual elements are drawn in below
+
+-->
+<div class="day-grid" >
+  <div class="timeline-week" ng-repeat="week in weekGrid">
+    <div class="timeline-day {{day.today}}" ng-repeat="day in week.days"></div>
+  </div>
+</div>
+<div class="meta-rows" >
+<!--
+                                                        
+  ####   ####  #    # ##### #####   ####  #       ####  
+ #    # #    # ##   #   #   #    # #    # #      #      
+ #      #    # # #  #   #   #    # #    # #       ####  
+ #      #    # #  # #   #   #####  #    # #           # 
+ #    # #    # #   ##   #   #   #  #    # #      #    # 
+  ####   ####  #    #   #   #    #  ####  ######  ####  
+
+-->
+  <div class="Row controls-row">
+    <div class="viewport-toggle left">
+      <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
+      <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
+    </div>
+    <div class="viewport-controls left">
+    <div ng-show="allExpanded==true">
+      <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
+        <span >
+          <i class="icon" data-icon="expand-all" ></i>
+        </span>
+      </a>
+    </div>
+    <div ng-show="allExpanded==false">
+      <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
+        <span >
+          <i class="icon" data-icon="collapse-all" ></i>
+        </span>
+      </a>
+    </div>
+
+    </div>
+    <div class="viewport-navigation right" >
+      <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
+        <i class="icon" data-icon="arrow-left"></i>
+      </a>
+      <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
+        This Week
+      </a>
+      <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
+        <i class="icon" data-icon="arrow-right"></i>
+      </a>
+    </div>
+  </div>
+  <div class="Row week-row">
+    <div class=" dropdown-button filter-dropdown"><a href="https://forecastapp.com/95636/schedule/team#" class="dropdown-link"  >
+      <span class="selected-filter">
+        Everyone
+      </span>
+      <i class="icon row-expand-icon" data-icon="arrow-down"></i>
+    </a>
+    <div class="dropdown" >
+      <div class=" list-select">
+        <a href="javascript:void(0);" >Everyone</a>
+        <hr>
+        <a href="javascript:void(0);" >projects</a>
+      </div>
+    </div>
+  </div>
+  <div class="row-viewport">
+    <div class="week-grid" >
+      <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
+        <div class="timeline-week-number">{{week.week}}</div>
+        <div class="timeline-week-dates">{{week.range}}</div>
+        <ol>
+          <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
+      {{day.date}}
+          </li>
+        </ol>
+    </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+      <!--
+                                                              
+       #####  #####   ####       # ######  ####  #####  ####  
+       #    # #    # #    #      # #      #    #   #   #      
+       #    # #    # #    #      # #####  #        #    ####  
+       #####  #####  #    #      # #      #        #        # 
+       #      #   #  #    # #    # #      #    #   #   #    # 
+       #      #    #  ####   ####  ######  ####    #    ####  
+                                                              
+      -->
+      <div ng-show="projectsView == true" id = "projectsView" class="project-rows">
+      <!--add "expanded-row" to user-row to flick switch-->
+      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" >
+      <div class="project-color"></div>
+      <div class="content-parent-row">
+
+        <div class="row-info" title="{{project.projectName}}" ng-click="project.showAssignments = !project.showAssignments;">
+
+          <h3><div class="trelloBoard" ng-show="project.trelloBoard && project.trelloBoard !='undefined'"><a href="https://trello.com/b/{{project.trelloBoard}}" target="_blank" title="Open This project's Trello board in a new tab"><img src="img/trelloicon.png"/></a></div><div class="new" ng-show="project.newToPipeline"></div>{{project.projectName}}</h3>
+          <span>{{project.spiderRef}}</span>
+          <i class="icon row-expand-icon" data-icon="arrow-down" ></i>
+        </div><!--/row-info-->
+
+        <!--totals row-->
+        <div class="row-viewport">
+          <div class="row-timeline">
+            <!--project totals here-->
+
+          </div>
+          <div class="allocation-grid" ng-mousemove="echomouse($index)"><div ng-repeat="milestone in project.milestones">
+            <div class="milestone" style="left:{{leftPosFromStart(milestone.date)}}px;" width="60px"><span>{{milestone.name}}</span></div>
+            </div>
+            <div ng-controller="addMilestoneCtrl" ng-show="mousepos.row==$index" style="left:{{mousepos.col}}px;" class="add-milestone {{parent.assignment.colour}}" >
+            <span ng-click="addMilestoneOpen(project,mousepos,weekGrid)">Add Milestone</span>
+            </div>
+          <div class="project-span project-active project-assigned" ng-show="project.width" style="left:{{project.start}}px;width:{{project.width}}px">
+          </div>
+
+          </div><!--/allocation-grid-->
+        </div><!--/row-viewport-->
+
+      </div><!--/content-parent-row-->
+
+      <div class="assignments" ng-show="project.showAssignments">
+      <!--Project header (LHC)-->
+      <div class="content-child-row" ng-repeat="assignment in project.assignments" ng-if="assignment.start + assignment.width >0">
+        <div class="row-info" >
+          <a class="child-row-name"   ng-controller="editAssignmentCtrl" ng-click="editAssignmentOpen(project,assignment.assignmentID)">
+            <span class="client-name" title="{{assignment.client}}">{{assignment.resource}}</span>
+            <span class="separator">/</span>
+            <span class="project-name" title="{{assignment.resource}}" >
+            {{assignment.notes}}
+            </span>
+          </a>
+          <i class="color {{assignment.colour}}" ></i>
+        </div><!--/row-info-->
+
+
+        <!--draw project bars-->
+        <div class="row-viewport">
+          <div class="row-timeline">
+
+            <div class="assignment {{assignment.colour}} ui-draggable ui-resizable" style="width:{{assignment.width}}px;left:{{leftPosFromStart(assignment.startDate)}}px;">
+              <span ng-if="assignment.start >= 0" style="left: 0px;">
+                {{assignment.hours}}hr/d
+              </span>
+              <span ng-if="assignment.start < 0" style="left: {{assignment.start * -1}}px;">
+                {{assignment.hours}}hr/d
+              </span>
+              <div class=" split-line" style="left: 0px;" title="Split this assignment"></div>
+              <div class="ui-resizable-handle ui-resizable-e" style="z-index:90"></div>
+              <div class="ui-resizable-handle ui-resizable-w" style="z-index:90"></div>
+          </div><!--/row-timeline-->
+        </div><!--/row-viewport-->  
+      </div><!--/content-child-row-->
+      
+      </div><!--??? what is this?-->
+
+
+      <div class="content-child-row content-add-row">
+      <div class="row-info">
+      <div ng-controller="editProjectCtrl">
+        <a class=" edit-content"  ng-click="editProjectOpen($parent.project)">
+          <span >
+            Edit
+          </span>
+        </a>
+        </div>
+        
+      <div class="assign" ng-controller="assignStaffCtrl">
+      <button class="button pipelinebutton" ng-click="assignStaffOpen($parent.project)" type="button">
+        Assign Staff Member
+        </button>
+      </div>
+      </div>
+      </div>
+      <div class="row-viewport">
+      </div>
+      </div>
+      </div>
+      <!--
+      <div ng-controller="addStaffCtrl" class="row add-row">
+        <button class=" button" ng-click="addStaffOpen()" type="button" tabindex="0">
+          <i class="icon" data-icon="add"></i>
+          Add Person
+        </button>
+      -->
+      </div>
+
+
+
+
+<!--
+                                                              
+                                   
+  ####  #####   ##   ###### ###### 
+ #        #    #  #  #      #      
+  ####    #   #    # #####  #####  
+      #   #   ###### #      #      
+ #    #   #   #    # #      #      
+  ####    #   #    # #      #      
+                                    
+                                                              
+      -->
+      <div ng-show="staffView == true" id = "staffView" class="staff-rows">
+
+      <div class="Row user-row" ng-class="{true:'expanded-row',false:''}[staffMember.showAssignments]" ng-repeat="staffMember in staff | orderBy:'team'" >
+      <div class=" content-parent-row">
+
+        <div class="row-info" ng-click="staffMember.showAssignments = !staffMember.showAssignments;">
+        <!--avatar-->
+        <img class="avatar"/>
+          <img ng-src="{{staffMember.avatar}}"/ >
+
+          <h3>{{staffMember.fullName}}</h3>
+          <span>{{staffMember.team}}</span>
+          <i class="icon row-expand-icon" data-icon="arrow-down"></i>
+        </div><!--/row-info-->
+
+        <!--totals row-->
+        <div class="row-viewport">
+          <div class="row-timeline"></div>
+          <div class="allocation-grid">
+          <div ng-repeat="day in staffMember.capacity" class="allocation-total {{day.cssClass}}" style="width:60px; left:{{day.idx}}px;">
+            <span style="left: 0px">{{day.hours}}</span>
+          </div>
+
+          </div><!--/allocation-grid-->
+        </div><!--/row-viewport-->
+
+      </div><!--/content-parent-row-->
+
+ <div class="assignments" ng-show="staffMember.showAssignments">
+      <!--Project header (LHC)-->
+      <div class="content-child-row" ng-repeat="assignment in staffMember.assignments" ng-if="assignment.start + assignment.width >0">
+        <div class="row-info">
+          <a class="child-row-name" >
+            <span class="client-name" title="{{assignment.client}}">{{assignment.projectName}}</span>
+            <span class="separator">/</span>
+            <span class="project-name" title="{{assignment.resource}}" >
+            {{assignment.notes}}
+            </span>
+          </a>
+          <i class="color {{assignment.colour}}" ></i>
+        </div><!--/row-info-->
+
+
+        <!--draw project bars-->
+        <div class="row-viewport">
+          <div class="row-timeline">
+            <div class=" assignment {{assignment.colour}} ui-draggable ui-resizable" style="width:{{assignment.width}}px;left:{{assignment.start}}px;" ng-dblclick="expression">
+              <span ng-if="assignment.start >= 0" style="left: 0px;">
+                {{assignment.hours}}hr/d
+              </span>
+              <span ng-if="assignment.start < 0" style="left: {{assignment.start * -1}}px;">
+                {{assignment.hours}}hr/d
+              </span>
+              <div class=" split-line" style="left: 0px;" title="Split this assignment"></div>
+              <div class="ui-resizable-handle ui-resizable-e" style="z-index:90"></div>
+              <div class="ui-resizable-handle ui-resizable-w" style="z-index:90"></div>
+          </div><!--/row-timeline-->
+        </div><!--/row-viewport-->  
+      </div><!--/content-child-row-->
+
+      </div><!--??? what is this?-->
+
+
+      <div class=" content-child-row content-add-row">
+      <div class="row-info">
+        <a class=" edit-content" href="https://forecastapp.com/95636/schedule/team/42322/edit">
+          <span >
+            Edit
+          </span>
+        </a>
+       
+      <div class="assign" ng-controller="assignProjectCtrl">
+      <button class="button pipelinebutton" ng-click="assignProjectOpen($parent.staffMember)" type="button">
+        Assign to project
+        </button>
+      </div>
+</div>
+      </div>
+      <div class="row-viewport">
+      </div>
+      </div>
+      </div>
+      <!--
+      <div ng-controller="addStaffCtrl" class="row add-row">
+        <button class=" button" ng-click="addStaffOpen()" type="button" tabindex="0">
+          <i class="icon" data-icon="add"></i>
+          Add Person
+        </button>
+      -->
+      </div>
+
+
+
+
+</div>
+</div>
+<!--
+            _         __  __                       _       _ 
+    _      | |       / _|/ _|                     | |     | |
+  _| |_ ___| |_ __ _| |_| |_   _ __ ___   ___   __| | __ _| |
+ |_   _/ __| __/ _` |  _|  _| | '_ ` _ \ / _ \ / _` |/ _` | |
+   |_| \__ \ || (_| | | | |   | | | | | | (_) | (_| | (_| | |
+       |___/\__\__,_|_| |_|   |_| |_| |_|\___/ \__,_|\__,_|_|
+                                                             
+                                                             
+
+<div ng-controller="addStaffCtrl">
+    <script type="text/ng-template" id="addStaffModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Add a staff member</h3>
+        </div>
+
+        <div class="modal-body">
+        <form class="form-horizontal">  
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="smName">Name</label>
+            <div class="col-sm-8">
+              <input type="text" id="smName" ng-model="newStaffMember.name" name="smName">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="control-label col-sm-2" for="smEmail">Email</label>
+            <div class="col-sm-6">
+              <input type="email" id="smEmail" name="smEmail" ng-model="newStaffMember.email">
+            </div>
+            <label class="control-label col-sm-2" for="workDay">hrs/day</label><div class="col-sm-2">
+            <input type="text" id="workDay" name="workDay" ng-model="newStaffMember.workDay" placeholder="7">
+            </div>
+          </div>
+
+          <div class="form-group" ng-controller="teamCtrl">
+            <label class="control-label col-sm-2" for="smTeam">Team</label>
+            <div class="col-sm-4">
+              <select name="smTeam" id="smTeam" ng-model="newStaffMember.team">
+              <option ng-repeat="team in teams">{{team.teamName}}</option>
+              </select>
+            </div>
+            <div class="clearfix"></div>
+          <label class="control-label col-sm-2" for="addTeam">add team</label>
+          <div class="controls col-sm-8">
+          <input type="text text-small" id="addTeam" name="addTeam" ng-model="newTeam.teamName">
+          <input type="button" class="btn btn-success" ng-click="addTeam()" value="add Team">
+          </div>
+          </div>
+        </form>  
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+    <div ng-show="selected">Selection from a modal: {{ selected }}</div>
+</div>
+-->
+<!--
+      __                _                       _       _ 
+      \ \              (_)                     | |     | |
+  _____\ \   _ __  _ __ _   _ __ ___   ___   __| | __ _| |
+ |______> > | '_ \| '__| | | '_ ` _ \ / _ \ / _` |/ _` | |
+       / /  | |_) | |  | | | | | | | | (_) | (_| | (_| | |
+      /_/   | .__/|_|  | | |_| |_| |_|\___/ \__,_|\__,_|_|
+            | |       _/ |                                
+            |_|      |__/                                 
+-->
+<div ng-controller="assignProjectCtrl">
+    <script type="text/ng-template" id="assignProjectModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Assign {{staffMember.fullName}} to Project</h3>
+        </div>
+
+        <div class="modal-body">
+          <form class="form-horizontal"> 
+            <div class="row">
+              <label for="ap_projects" class="col-sm-1">project</label>
+              <div class="col-sm-8">  
+                <select id="ap_projects" ng-model="assignProject.prj">
+                  <option value="">
+                    Assign to Project…
+                  </option>
+                  <option ng-repeat = "project in projectList" value={{project.id}}>{{project.projectName}}</option>
+                </select>
+              </div>
+              
+              <label for="ap_hours">hrs</label>
+              <div class="controls">
+                <select id="ap_hours" ng-model="assignProject.hours">
+                  <option>7</option>
+                  <option>6</option>
+                  <option>5</option>
+                  <option>4</option>
+                  <option>3</option>
+                  <option>2</option>
+                  <option>1</option>
+                  <option>0</option>
+                </select>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <label class="col-sm-1" for = "ap_startDate">start date</label>
+              <div class="col-sm-4">
+              <p class="input-group">
+                <input type="text" class="form-control" 
+                    datepicker-popup="dd/MM/yy"
+                    ng-model="assignProject.startDate"
+                    is-open="sdopened"
+                    ng-required="true"
+                    close-text="close" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="sdopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              </div>
+              <label class="col-sm-1" for = "ap_endDate">end date</label>
+              <div class="col-sm-4">
+              <p class="input-group">
+                <input type="text" class="form-control" 
+                    datepicker-popup="dd/MM/yy"
+                    ng-model="assignProject.endDate"
+                    is-open="edopened"
+                    ng-required="true"
+                    close-text="close" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="edopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <label for="ap_notes" class="col-sm-1">notes</label>
+              <div class="col-sm-7">
+                <textarea id="ap_notes" ng-model="assignProject.notes"></textarea>
+              </div>
+
+            </div>
+          </form>  
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+</div>
+
+
+
+<!--
+               _            ______          _           _   
+              (_)           | ___ \        (_)         | |  
+  __ _ ___ ___ _  __ _ _ __ | |_/ / __ ___  _  ___  ___| |_ 
+ / _` / __/ __| |/ _` | '_ \|  __/ '__/ _ \| |/ _ \/ __| __|
+| (_| \__ \__ \ | (_| | | | | |  | | | (_) | |  __/ (__| |_ 
+ \__,_|___/___/_|\__, |_| |_\_|  |_|  \___/| |\___|\___|\__|
+                  __/ |                   _/ |              
+                 |___/                   |__/               
+-->
+<div ng-controller="assignStaffCtrl">
+    <script type="text/ng-template" id="assignStaffModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Assign staff member to {{project.projectName}}</h3>
+        </div>
+
+        <div class="modal-body">
+          <form class="form-horizontal"> 
+            <div class="row">
+              <label for="as_staff" class="col-sm-1">staff member</label>
+              <div class="col-sm-8">  
+                <select id="as_staff" ng-model="assignStaff.staffMember" ng-options="staffMember.userName group by staffMember.team for staffMember in staffMemberList ">
+                  <option value="">
+                    Assign to Project…
+                  </option>
+
+                </select>
+              </div>
+              
+              <label for="as_hours">hrs</label>
+              <div class="controls">
+                <select id="as_hours" ng-model="assignStaff.hours">
+                  <option>7</option>
+                  <option>6</option>
+                  <option>5</option>
+                  <option>4</option>
+                  <option>3</option>
+                  <option>2</option>
+                  <option>1</option>
+                </select>
+             
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <label class="col-sm-1" for = "as_startDate">start date</label>
+              <div class="col-sm-4">
+              <p class="input-group">
+                <input type="text" class="form-control" 
+                    datepicker-popup="dd/MM/yy"
+                    ng-model="assignStaff.startDate"
+                    is-open="sdopened"
+                    ng-required="true"
+                    close-text="close" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="sdopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              </div>
+              <label class="col-sm-1" for = "as_endDate">end date</label>
+              <div class="col-sm-4">
+              <p class="input-group">
+                <input type="text" class="form-control" 
+                    datepicker-popup="dd/MM/yy"
+                    ng-model="assignStaff.endDate"
+                    is-open="edopened"
+                    ng-required="true"
+                    close-text="close" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="edopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <label for="as_notes" class="col-sm-1">notes</label>
+              <div class="col-sm-7">
+                <textarea id="as_notes" ng-model="assignStaff.notes"></textarea>
+              </div>
+            </div>
+          </form>  
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+</div>
+<!----------------------------------------//-> 
+
+<!-- 
+         _ _ _    ___          _                                  _   
+         | (_) |  / _ \        (_)                                | |  
+  ___  __| |_| |_/ /_\ \___ ___ _  __ _ _ __  _ __ ___   ___ _ __ | |_ 
+ / _ \/ _` | | __|  _  / __/ __| |/ _` | '_ \| '_ ` _ \ / _ \ '_ \| __|
+|  __/ (_| | | |_| | | \__ \__ \ | (_| | | | | | | | | |  __/ | | | |_ 
+ \___|\__,_|_|\__\_| |_/___/___/_|\__, |_| |_|_| |_| |_|\___|_| |_|\__|
+                                   __/ |                               
+                                  |___/                                -->
+
+<div ng-controller="editAssignmentCtrl">
+    <script type="text/ng-template" id="editAssignmentModal.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Edit assignment: ({{editAssignment.resource}} &quot;{{editAssignment.notes}}&quot; on {{editAssignment.projectName}})</h3>
+        </div>
+
+        <div class="modal-body">
+          <form class="form-horizontal"> 
+            <div class="row">
+              <label for="ea_staff" class="col-sm-3">re-assign?:</label>
+              <div class="col-sm-5">  
+                <select id="ea_staff" ng-model="editAssignment.staffMember" ng-options="staffMember.userName group by staffMember.team for staffMember in staffMemberList " ng-change="reassign()">
+                </select>
+              </div>
+              <label for="ea_hours" class="col-sm-1">hrs</label>
+              <div class="controls">
+                <select id="ea_hours" ng-model="editAssignment.hours">
+                  <option>7</option>
+                  <option>6</option>
+                  <option>5</option>
+                  <option>4</option>
+                  <option>3</option>
+                  <option>2</option>
+                  <option>1</option>
+                </select>
+             
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <label class="col-sm-1" for = "ea_startDate">start date</label>
+              <div class="col-sm-4">
+              <p class="input-group">
+                <input type="text" class="form-control" 
+                    datepicker-popup="dd/MM/yy"
+                    ng-model="editAssignment.startDate"
+                    is-open="sdopened"
+                    ng-required="true"
+                    close-text="close" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="sdopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              </div>
+              <label class="col-sm-1" for = "ea_endDate">end date</label>
+              <div class="col-sm-4">
+              <p class="input-group">
+                <input type="text" class="form-control" 
+                    datepicker-popup="dd/MM/yy"
+                    ng-model="editAssignment.endDate"
+                    is-open="edopened"
+                    ng-required="true"
+                    close-text="close" />
+                <span class="input-group-btn">
+                <button type="button" class="btn btn-default" ng-click="edopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+              </span>
+              </p>
+              </div>
+            </div>
+            <br>
+            <div class="row">
+              <label for="ea_notes" class="col-sm-1">notes</label>
+              <div class="col-sm-7">
+                <textarea id="ea_notes" ng-model="editAssignment.notes"></textarea>
+              </div>
+              <label for ="ap_notes" class="col-sm-2">complete</label>
+              <div class="col-sm-1">
+              <input type="checkbox" ng-checked="editAssignment.state">
+              </div>
+            </div>
+          </form>  
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-click="ok()">OK</button>
+            <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+        </div>
+    </script>
+</div>
+<!----------------------------------------//-> 
+
+<!-- 
+          _ _ _  ______          _           _   
+         | (_) | | ___ \        (_)         | |  
+  ___  __| |_| |_| |_/ / __ ___  _  ___  ___| |_ 
+ / _ \/ _` | | __|  __/ '__/ _ \| |/ _ \/ __| __|
+|  __/ (_| | | |_| |  | | | (_) | |  __/ (__| |_ 
+ \___|\__,_|_|\__\_|  |_|  \___/| |\___|\___|\__|
+                               _/ |              
+                              |__/                                             
+-->
+
+<div ng-controller="editProjectCtrl">
+  <script type="text/ng-template" id="editProjectModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Edit Project: {{project.projectName}}</h3>
+    </div>
+
+    <div class="modal-body">
+      <form class="form-horizontal"> 
+        <div class="row">
+          <label for="ep_pmList" class="col-sm-3">PM:</label>
+          <div class="col-sm-5">  
+            <select id="ep_pmList" ng-model="project.pm" ng-options="pm.userName group by pm.team for pm in pmList ">
+            </select>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <label for="ep_colour" class="col-sm-3">colour:</label>
+          <div class="col-sm-5">  
+            <select id="ep_colour" ng-model="project.colour" ng-options="colour.name for colour in colours">
+            </select>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <label for="ep_ref" class="col-sm-3">Project Ref:</label>
+          <div class="col-sm-5">  
+            <input type="text" id="ep_ref" ng-model="project.spiderRef" />
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <label class="col-sm-1" for = "ep_startDate">start date</label>
+          <div class="col-sm-4">
+          <p class="input-group">
+            <input type="text" id="ep_startDate" class="form-control" 
+                datepicker-popup="dd/MM/yy"
+                ng-model="project.startDate"
+                is-open="sdopened"
+                ng-required="true"
+                close-text="close" />
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="sdopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+          </p>
+          </div>
+          <label class="col-sm-1" for = "ep_dueDate">end date</label>
+          <div class="col-sm-4">
+          <p class="input-group">
+            <input type="text" id="ep_dueDate" class="form-control" 
+                datepicker-popup="dd/MM/yy"
+                ng-model="project.deadline"
+                is-open="edopened"
+                ng-required="true"
+                close-text="close" />
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="edopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+          </p>
+          </div>
+          <br>
+          <div class="row">
+          <label for="ep_trelloBoard" class="col-sm-3">Trello Board (paste URL):</label>
+          <div class="col-sm-5">  
+            <input type="text" id="ep_trelloBoard" ng-model="project.trelloBoard" />
+          </div>
+        </div>
+        </div>
+      </form>  
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </script>
+</div>
+<!----------------------------------------//-> 
+
+
+<!-- 
+        __  __ _ _           _                   
+    _  |  \/  (_) | ___  ___| |_ ___  _ __   ___ 
+  _| |_| |\/| | | |/ _ \/ __| __/ _ \| '_ \ / _ \
+ |_   _| |  | | | |  __/\__ \ || (_) | | | |  __/
+   |_| |_|  |_|_|_|\___||___/\__\___/|_| |_|\___|
+                                                         
+-->
+
+<div ng-controller="addMilestoneCtrl">
+  <script type="text/ng-template" id="addMilestoneModal.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Add Milestone:{{milestone.name}} to {{project.projectName}}</h3>
+    </div>
+
+    <div class="modal-body">
+      <form class="form-horizontal"> 
+        <div class="row">
+          <label for="am_milestone" class="col-sm-3">Milestone:</label>
+          <div class="col-sm-5">  
+            <input type="text" id="am_milestone" ng-model="milestone.name" />
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <label class="col-sm-1" for = "am_milestoneDate">date</label>
+          <div class="col-sm-4">
+          <p class="input-group">
+            <input type="text" id="am_milestoneDate" class="form-control" 
+                datepicker-popup="dd/MM/yy"
+                ng-model="selectedDate"
+                is-open="sdopened"
+                ng-required="true"
+                close-text="close" />
+            <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="sdopen($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+          </span>
+          </p>
+          </div>
+        </div>
+      </form>  
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" ng-click="ok()">OK</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+  </script>
+</div>
+<!----------------------------------------//-> 
+</main>
+
+</body>
+</html>

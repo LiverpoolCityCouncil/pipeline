@@ -1,0 +1,15 @@
+.pipelinebutton{
+	margin-top: -7px;
+}
+a.dropdown-link{color:silver;}
+a.dropdown-link:hover{color:white;}
+.new{float:right;width:45px;height:70px;text-align:center;background:yellow;color:black;}
+.new:after{content: "NEW";}
+.textdark{color:#333;}
+.textlight{color:#eee;}
+.milestone{z-index:5;}
+.add-milestone{z-index:2;}
+.trelloBoard{float:left;width:20px;}
+.trelloBoard a{opacity:.5;}
+.trelloBoard a:hover{opacity:1;}
+.trelloBoard img{width:17px;height:17px;}

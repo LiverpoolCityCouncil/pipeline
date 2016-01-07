@@ -1,0 +1,26 @@
+{
+  "name": "pipeline",
+  "description": "A gantt chart front end for trello",
+  "main": "server.js",
+  "authors": [
+    "Dominic Jones"
+  ],
+  "license": "ISC",
+  "moduleType": [
+    "es6",
+    "node"
+  ],
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "angular-bootstrap": "~0.14.3"
+  }
+}
