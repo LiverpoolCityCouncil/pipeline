@@ -17,11 +17,13 @@ var express = require('express');
 var async = require('async');
 var app = express();
 var bodyParser = require('body-parser');
-var trelloBoard="55decf413d5ceb981dfcb15e";
+//var trelloBoard="55decf413d5ceb981dfcb15e"; // Spider Trello (LIVE!)
+var trelloBoard="jZalCdKy"; // Pipeline Development Board (dev)
+
 var trelloList ="55ded9966dd99cded024ac7a"; 
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
-var pipelineConfigBoard = '55dc3f6f1135e1887b3dbe11';
+var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
+var pipelineConfigBoard = '55dc3f6f1135e1887b3dbe11'; //unused (so far)
 
 app.use(bodyParser.json())
 

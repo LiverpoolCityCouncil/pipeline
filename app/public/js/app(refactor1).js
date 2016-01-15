@@ -30,13 +30,13 @@ Date.prototype.subtractDays = function(daysToSubtract){
 */
 
 var colours = ["orange","aqua","blue","purple","red","gray","green"];
-//var trelloBoard="552fc643c7e7098279146341"; //dev
-var trelloBoard="544e2d207ad565ce3a4cc4f4"; //live
-//var trelloLists =[{idx:0,id:"55916f3624405fba862eede7",name:"stage 3"},{idx:1,id:"55dc69516d7e5f3a2b49492a",name:"BAU"}]; //dev
-var trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3"},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU"}]; //live
+var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
+//var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
+var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3"},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU"}]; //dev
+//var trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3"},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU"}]; //live
 $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
+var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
 
 $rootScope.teams = [
 {
@@ -65,7 +65,7 @@ $rootScope.teams = [
 },
 {
   name:'System',
-  members:['@pipelinebot','@DEATH']
+  members:['@pipelinebot','@DEATH','@lccwebrobot']
 }];
 $rootScope.colours=[{name:'orange'},{name:'green'},{name:'aqua'},{name:'blue'},{name:'yellow'},{name:'salmon'},{name:'pink'},{name:'mint'},{name:'grass'},{name:'purple'},{name:'magenta'},{name:'red'},{name:'grey'},{name:'black'}];
 $rootScope.projects=[];
