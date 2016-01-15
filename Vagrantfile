@@ -6,8 +6,8 @@ Vagrant.configure(2) do |config|
   config.vm.box = "hashicorp/precise64"
     #proxy
   if Vagrant.has_plugin?("vagrant-proxyconf")
-    config.proxy.http = "http://10.11.89.53:3128"
-    config.proxy.https = "http://10.11.89.53:3128"
+    config.proxy.http = "http://10.11.89.53:3128" #Note this is Dom's local machine proxy
+    config.proxy.https = "http://10.11.89.53:3128" #Note this is Dom's local machine proxy
     config.proxy.no_proxy = "localhost,127.0.0.1"
   end
   config.vm.network "forwarded_port", guest: 80, host: 8080
