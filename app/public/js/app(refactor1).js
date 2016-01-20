@@ -68,6 +68,8 @@ $rootScope.teams = [
   members:['@pipelinebot','@DEATH','@lccwebrobot']
 }];
 $rootScope.colours=[{name:'orange'},{name:'green'},{name:'aqua'},{name:'blue'},{name:'yellow'},{name:'salmon'},{name:'pink'},{name:'mint'},{name:'grass'},{name:'purple'},{name:'magenta'},{name:'red'},{name:'grey'},{name:'black'}];
+$rootScope.leaveCardID='8GPkKF0V';//dev
+//$rootScope.leaveCardID='J4pZMxUW';//live
 $rootScope.projects=[];
 $rootScope.staff=[];
 
@@ -101,6 +103,12 @@ var getCards =function getCards(arrList){
       $http.get("https://trello.com/1/lists/"+arrList[n].id+"/cards?key="+trelloKey+"&token="+trelloToken)
   .success(buildProjectsObject);
   }
+}
+
+function getLeaveObjects(){
+//get new leave objects
+  $http.get("https://trello.com/1/cards/"+$rootScope.leaveCardID+"/actions?key="+trelloKey+"&token="+trelloToken)
+  .success(parseLeaveObject);
 }
 
 /*
@@ -428,6 +436,28 @@ var parseCard = function(objCard){
   }
 }
 
+function parseLeaveObject(response){
+  console.log("LEAVE:");
+  console.log(response);
+  console.log("STAFF:");
+  console.log($rootScope.staff)
+  angular.forEach(response, function buildLeaveObject(v,k){
+    if(v.type=='commentCard'){
+      console.log(v.data.text);
+      var smName = v.data.text.split('|');
+      console.log(smName[0]);
+      for (var n=0;n < $rootScope.staff.length; n++){
+        console.log($rootScope.staff[n].fullName);
+        if($rootScope.staff[n].fullName == smName[0]){
+          smName[0]=$rootScope.staff[n].userName;
+        }
+      }
+      var leaveObject = smName.join('|');
+      console.log(leaveObject);
+    }
+  })
+}
+
 function parseCards(objCardList,callback){
   objCardList.forEach(parseCard);
   callback;
@@ -486,7 +516,23 @@ function assignToStaff(assignment){
                          
 */
 
-//getBoards();
+
+
+
+
+
+
+
+
+
+
+
+
+
+//parse out new leave items (these come in as comments to the leave ticket as thats all Zapier can do)
+getLeaveObjects();
+
+
 $scope.renderDayGrid($rootScope.today);
 getstaff();
 console.log($rootScope);
