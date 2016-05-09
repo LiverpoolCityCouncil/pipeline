@@ -19,21 +19,21 @@ Date.prototype.subtractDays = function(daysToSubtract){
 }
 
 /*
-                                                  
-  ####  #       ####  #####    ##   #       ####  
- #    # #      #    # #    #  #  #  #      #      
- #      #      #    # #####  #    # #       ####  
- #  ### #      #    # #    # ###### #           # 
- #    # #      #    # #    # #    # #      #    # 
-  ####  ######  ####  #####  #    # ######  ####  
-                                                  
+
+  ####  #       ####  #####    ##   #       ####
+ #    # #      #    # #    #  #  #  #      #
+ #      #      #    # #####  #    # #       ####
+ #  ### #      #    # #    # ###### #           #
+ #    # #      #    # #    # #    # #      #    #
+  ####  ######  ####  #####  #    # ######  ####
+
 */
 
 var colours = ["orange","aqua","blue","purple","red","gray","green"];
-var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
-//var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
-var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3"},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU"}]; //dev
-//var trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3"},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU"}]; //live
+//var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
+var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
+//var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3"},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU"}]; //dev
+var trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3"},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU"}]; //live
 $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
@@ -81,14 +81,14 @@ $scope.offset = 0;
 $scope.allExpanded = true;
 
 /*
-                            
- #####    ##   #####   ##   
- #    #  #  #    #    #  #  
- #    # #    #   #   #    # 
- #    # ######   #   ###### 
- #    # #    #   #   #    # 
- #####  #    #   #   #    # 
-                            
+
+ #####    ##   #####   ##
+ #    #  #  #    #    #  #
+ #    # #    #   #   #    #
+ #    # ######   #   ######
+ #    # #    #   #   #    #
+ #####  #    #   #   #    #
+
 */
 function getstaff(){
 //get Board Members
@@ -112,24 +112,24 @@ function getLeaveObjects(){
 }
 
 /*
-                                               
- #    # ##### # #      # ##### # ######  ####  
- #    #   #   # #      #   #   # #      #      
- #    #   #   # #      #   #   # #####   ####  
- #    #   #   # #      #   #   # #           # 
- #    #   #   # #      #   #   # #      #    # 
-  ####    #   # ###### #   #   # ######  ####  
-                                               
+
+ #    # ##### # #      # ##### # ######  ####
+ #    #   #   # #      #   #   # #      #
+ #    #   #   # #      #   #   # #####   ####
+ #    #   #   # #      #   #   # #           #
+ #    #   #   # #      #   #   # #      #    #
+  ####    #   # ###### #   #   # ######  ####
+
 */
 function workingDaysBetweenDates(startDate, endDate) {
-    
+
     // Calculate days between dates
     var millisecondsPerDay = 86400 * 1000; // Day in milliseconds
     startDate.setHours(0,0,0,1);  // Start just after midnight
     endDate.setHours(23,59,59,999);  // End just before midnight
-    var diff = endDate - startDate;  // Milliseconds between datetime objects    
+    var diff = endDate - startDate;  // Milliseconds between datetime objects
     var days = Math.ceil(diff / millisecondsPerDay);
-    
+
     // Subtract two weekend days for every week in between
     var weeks = Math.floor(days / 7);
     var days = days - (weeks * 2);
@@ -137,19 +137,19 @@ function workingDaysBetweenDates(startDate, endDate) {
     // Handle special cases
     var startDay = startDate.getDay();
     var endDay = endDate.getDay();
-    
-    // Remove weekend not previously removed.   
-    if (startDay - endDay > 1)         
-        days = days - 2;      
-    
+
+    // Remove weekend not previously removed.
+    if (startDay - endDay > 1)
+        days = days - 2;
+
     // Remove start day if span starts on Sunday but ends before Saturday
     if (startDay == 0 && endDay != 6)
-        days = days - 1  
-            
+        days = days - 1
+
     // Remove end day if span ends on Saturday but starts after Sunday
     if (endDay == 6 && startDay != 0)
-        days = days - 1  
-    
+        days = days - 1
+
     return days;
 }
 
@@ -160,7 +160,7 @@ function workingDaysBetweenDates(startDate, endDate) {
       var PLCTRL = PLCTRL[0].replace('PIPELINE','');
       var fixedJSON = PLCTRL.replace(/(['"])?([a-zA-Z0-9_@\-\\\/]+)(['"])?/g, '"$2"');
       var objPLCTRL = JSON.parse(fixedJSON);
-    } 
+    }
     return objPLCTRL;
   }
 
@@ -172,16 +172,16 @@ function workingDaysBetweenDates(startDate, endDate) {
   }
 
 /*
-                                    
-  ####  #####  # #####     #    # # 
- #    # #    # # #    #    #    # # 
- #      #    # # #    #    #    # # 
- #  ### #####  # #    #    #    # # 
- #    # #   #  # #    #    #    # # 
-  ####  #    # # #####      ####  # 
 
- 
-                                    
+  ####  #####  # #####     #    # #
+ #    # #    # # #    #    #    # #
+ #      #    # # #    #    #    # #
+ #  ### #####  # #    #    #    # #
+ #    # #   #  # #    #    #    # #
+  ####  #    # # #####      ####  #
+
+
+
 */
 
   $scope.renderDayGrid=function(startDate){
@@ -197,8 +197,8 @@ function workingDaysBetweenDates(startDate, endDate) {
 
     /*
     Bug happens after we've subtracted 7 days from rootScope.startDate.
-    It renders the first week fine, but then seems to add a day before 
-    rendering the second week 
+    It renders the first week fine, but then seems to add a day before
+    rendering the second week
     */
 
     var dayCount =0;
@@ -265,14 +265,14 @@ function workingDaysBetweenDates(startDate, endDate) {
 
 
 /*
-                                                          
- #      #  ####  ##### ###### #    # ###### #####   ####  
- #      # #        #   #      ##   # #      #    # #      
- #      #  ####    #   #####  # #  # #####  #    #  ####  
- #      #      #   #   #      #  # # #      #####       # 
- #      # #    #   #   #      #   ## #      #   #  #    # 
- ###### #  ####    #   ###### #    # ###### #    #  ####  
-                                                          
+
+ #      #  ####  ##### ###### #    # ###### #####   ####
+ #      # #        #   #      ##   # #      #    # #
+ #      #  ####    #   #####  # #  # #####  #    #  ####
+ #      #      #   #   #      #  # # #      #####       #
+ #      # #    #   #   #      #   ## #      #   #  #    #
+ ###### #  ####    #   ###### #    # ###### #    #  ####
+
 */
 
   $scope.backDate = function(){
@@ -331,14 +331,14 @@ function workingDaysBetweenDates(startDate, endDate) {
 
 
 /*
-                                                  
- #####    ##   #####   ####  ###### #####   ####  
- #    #  #  #  #    # #      #      #    # #      
- #    # #    # #    #  ####  #####  #    #  ####  
- #####  ###### #####       # #      #####       # 
- #      #    # #   #  #    # #      #   #  #    # 
- #      #    # #    #  ####  ###### #    #  ####  
-                                                  
+
+ #####    ##   #####   ####  ###### #####   ####
+ #    #  #  #  #    # #      #      #    # #
+ #    # #    # #    #  ####  #####  #    #  ####
+ #####  ###### #####       # #      #####       #
+ #      #    # #   #  #    # #      #   #  #    #
+ #      #    # #    #  ####  ###### #    #  ####
+
 */
 function dateOrdinal(inDate){
   var doParts = inDate.split("/");
@@ -506,14 +506,14 @@ function assignToStaff(assignment){
 
 /*
 
-  #####  ####### ### ### 
- #     # #     # ### ### 
- #       #     # ### ### 
- #  #### #     #  #   #  
- #     # #     #         
- #     # #     # ### ### 
-  #####  ####### ### ### 
-                         
+  #####  ####### ### ###
+ #     # #     # ### ###
+ #       #     # ### ###
+ #  #### #     #  #   #
+ #     # #     #
+ #     # #     # ### ###
+  #####  ####### ### ###
+
 */
 
 
