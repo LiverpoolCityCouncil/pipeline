@@ -1,6 +1,9 @@
 .pipelinebutton{
 	margin-top: -7px;
 }
+.assign{
+	margin-top: -10px;margin-left:30px;
+}
 a.dropdown-link{color:silver;}
 a.dropdown-link:hover{color:white;}
 .new{float:right;width:45px;height:70px;text-align:center;background:yellow;color:black;}
