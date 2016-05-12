@@ -111,84 +111,7 @@ This is just "graph paper" - the actual elements are drawn in below
     <div class="timeline-day {{day.today}}" ng-repeat="day in week.days"></div>
   </div>
 </div>
-<div class="meta-rows" >
-<!--
 
-  ####   ####  #    # ##### #####   ####  #       ####
- #    # #    # ##   #   #   #    # #    # #      #
- #      #    # # #  #   #   #    # #    # #       ####
- #      #    # #  # #   #   #####  #    # #           #
- #    # #    # #   ##   #   #   #  #    # #      #    #
-  ####   ####  #    #   #   #    #  ####  ######  ####
-
--->
-  <div class="Row controls-row">
-    <div class="viewport-toggle left">
-      <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
-      <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
-    </div>
-    <div class="viewport-controls left">
-    <div ng-show="allExpanded==true">
-      <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
-        <span >
-          <i class="icon" data-icon="expand-all" ></i>
-        </span>
-      </a>
-    </div>
-    <div ng-show="allExpanded==false">
-      <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
-        <span >
-          <i class="icon" data-icon="collapse-all" ></i>
-        </span>
-      </a>
-    </div>
-
-    </div>
-    <div class="viewport-navigation right" >
-      <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
-        <i class="icon" data-icon="arrow-left"></i>
-      </a>
-      <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
-        This Week
-      </a>
-      <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
-        <i class="icon" data-icon="arrow-right"></i>
-      </a>
-    </div>
-  </div>
-  <div class="Row week-row">
-    <div class=" dropdown-button filter-dropdown"><a href="#" class="dropdown-link" ng-click="showFilters = !showFilters" >
-      <span class="selected-filter">
-        Filter List
-      </span>
-      <i class="icon row-expand-icon" data-icon="arrow-down"></i>
-    </a>
-    <div class="" ng-show="showFilters">
-        <div class="filter-dropdown-list list-select">
-
-          <ul class="filterList" ng-repeat="trellolist in trelloLists">
-            <li>
-              <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>
-            </li>
-          </ul>
-      </div>
-    </div>
-  </div>
-  <div class="row-viewport">
-    <div class="week-grid" >
-      <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
-        <div class="timeline-week-number">{{week.week}}</div>
-        <div class="timeline-week-dates">{{week.range}}</div>
-        <ol>
-          <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
-      {{day.date}}
-          </li>
-        </ol>
-    </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
       <!--
@@ -202,6 +125,84 @@ This is just "graph paper" - the actual elements are drawn in below
 
       -->
       <div ng-show="projectsView == true" id = "projectsView" class="project-rows">
+        <div class="meta-rows" >
+        <!--
+
+          ####   ####  #    # ##### #####   ####  #       ####
+         #    # #    # ##   #   #   #    # #    # #      #
+         #      #    # # #  #   #   #    # #    # #       ####
+         #      #    # #  # #   #   #####  #    # #           #
+         #    # #    # #   ##   #   #   #  #    # #      #    #
+          ####   ####  #    #   #   #    #  ####  ######  ####
+
+        -->
+          <div class="Row controls-row">
+            <div class="viewport-toggle left">
+              <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
+              <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
+            </div>
+            <div class="viewport-controls left">
+            <div ng-show="allExpanded==true">
+              <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
+                <span >
+                  <i class="icon" data-icon="expand-all" ></i>
+                </span>
+              </a>
+            </div>
+            <div ng-show="allExpanded==false">
+              <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
+                <span >
+                  <i class="icon" data-icon="collapse-all" ></i>
+                </span>
+              </a>
+            </div>
+
+            </div>
+            <div class="viewport-navigation right" >
+              <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
+                <i class="icon" data-icon="arrow-left"></i>
+              </a>
+              <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
+                This Week
+              </a>
+              <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
+                <i class="icon" data-icon="arrow-right"></i>
+              </a>
+            </div>
+          </div>
+          <div class="Row week-row">
+            <div class=" dropdown-button filter-dropdown"><a href="#" class="dropdown-link" ng-click="showProjectFilters = !showProjectFilters" >
+              <span class="selected-filter">
+                Filter List
+              </span>
+              <i class="icon row-expand-icon" data-icon="arrow-down"></i>
+            </a>
+            <div class="" ng-show="showProjectFilters">
+                <div class="filter-dropdown-list list-select">
+
+                  <ul class="filterList" ng-repeat="trellolist in trelloLists">
+                    <li>
+                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>
+                    </li>
+                  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row-viewport">
+            <div class="week-grid" >
+              <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
+                <div class="timeline-week-number">{{week.week}}</div>
+                <div class="timeline-week-dates">{{week.range}}</div>
+                <ol>
+                  <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
+              {{day.date}}
+                  </li>
+                </ol>
+            </div>
+                </div>
+              </div>
+            </div>
+          </div>
       <!--add "expanded-row" to user-row to flick switch-->
       <!--Show projects where project.listID = trellolists.id and trellolists.show == true-->
       <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
@@ -317,8 +318,84 @@ This is just "graph paper" - the actual elements are drawn in below
 
       -->
       <div ng-show="staffView == true" id = "staffView" class="staff-rows">
+        <div class="meta-rows" >
+        <!--
 
-      <div class="Row user-row" ng-class="{true:'expanded-row',false:''}[staffMember.showAssignments]" ng-repeat="staffMember in staff | orderBy:'team'" >
+          ####   ####  #    # ##### #####   ####  #       ####
+         #    # #    # ##   #   #   #    # #    # #      #
+         #      #    # # #  #   #   #    # #    # #       ####
+         #      #    # #  # #   #   #####  #    # #           #
+         #    # #    # #   ##   #   #   #  #    # #      #    #
+          ####   ####  #    #   #   #    #  ####  ######  ####
+
+        -->
+          <div class="Row controls-row">
+            <div class="viewport-toggle left">
+              <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
+              <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
+            </div>
+            <div class="viewport-controls left">
+            <div ng-show="allExpanded==true">
+              <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
+                <span >
+                  <i class="icon" data-icon="expand-all" ></i>
+                </span>
+              </a>
+            </div>
+            <div ng-show="allExpanded==false">
+              <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
+                <span >
+                  <i class="icon" data-icon="collapse-all" ></i>
+                </span>
+              </a>
+            </div>
+
+            </div>
+            <div class="viewport-navigation right" >
+              <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
+                <i class="icon" data-icon="arrow-left"></i>
+              </a>
+              <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
+                This Week
+              </a>
+              <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
+                <i class="icon" data-icon="arrow-right"></i>
+              </a>
+            </div>
+          </div>
+          <div class="Row week-row">
+            <div class=" dropdown-button filter-dropdown"><a href="#" class="dropdown-link" ng-click="showStaffFilters = !showStaffFilters" >
+              <span class="selected-filter">
+                Filter List
+              </span>
+              <i class="icon row-expand-icon" data-icon="arrow-down"></i>
+            </a>
+            <div class="" ng-show="showStaffFilters">
+                <div class="filter-dropdown-list list-select">
+                  <ul class="filterList" ng-repeat="team in teams">
+                    <li>
+                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="team.show != team.show"/>
+                    </li>
+                  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row-viewport">
+            <div class="week-grid" >
+              <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
+                <div class="timeline-week-number">{{week.week}}</div>
+                <div class="timeline-week-dates">{{week.range}}</div>
+                <ol>
+                  <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
+              {{day.date}}
+                  </li>
+                </ol>
+            </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      <div class="Row user-row" ng-class="{true:'expanded-row',false:''}[staffMember.showAssignments]" ng-repeat="staffMember in staff | orderBy:'team'" ng-show="showMembersFromThisTeam(staffMember.team)">
       <div class=" content-parent-row">
 
         <div class="row-info" ng-click="staffMember.showAssignments = !staffMember.showAssignments;">

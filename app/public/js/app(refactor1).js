@@ -38,34 +38,41 @@ $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
 
-$rootScope.teams = [
+$scope.teams = [
 {
   name:'UX',
-  members:['@oddjones','@chatmandu','@leeeaseman','@jayneedwards','@markallen16']
+  members:['@oddjones','@chatmandu','@leeeaseman','@jayneedwards','@markallen16'],
+  show:true
 },
 {
   name:'Development',
-  members:['@annmarieflynn','@dominicreid','@eugenecook','@johnsmith5','@katenorth1','@kevincann','@neilnorpa','@mikeranscombe']
+  members:['@annmarieflynn','@dominicreid','@eugenecook','@johnsmith5','@katenorth1','@kevincann','@neilnorpa'],
+  show:true
 },
 {
   name:'Projects',
-  members:['@willcostello','@iangeer','@jamesjennings1','@jonathanglynn','@chrisreynolds2']
+  members:['@iangeer','@jamesjennings1','@jonathanglynn','@chrisreynolds2'],
+  show:true
 },
 {
   name:'Content',
-  members:['@andreajones2','@sophiebaines1']
+  members:['@andreajones2','@sophiebaines1'],
+  show:true
 },
 {
   name:'Support',
-  members:['@davcoops','@lynchj3','@paullfc','@sheagraffin','@martinatherton1']
+  members:['@davcoops','@lynchj3','@paullfc','@sheagraffin','@martinatherton1'],
+  show:true
 },
 {
   name:'Management',
-  members:['@ckx79']
+  members:['@ckx79','@mikeranscombe','@willcostello'],
+  show:false
 },
 {
   name:'System',
-  members:['@pipelinebot','@DEATH','@lccwebrobot']
+  members:['@pipelinebot','@DEATH','@lccwebrobot'],
+  show:false
 }];
 $rootScope.colours=[{name:'orange'},{name:'green'},{name:'aqua'},{name:'blue'},{name:'yellow'},{name:'salmon'},{name:'pink'},{name:'mint'},{name:'grass'},{name:'purple'},{name:'magenta'},{name:'red'},{name:'grey'},{name:'black'}];
 $rootScope.leaveCardID='8GPkKF0V';//dev
@@ -101,6 +108,16 @@ $scope.showItemsFromThisList = function(listID){
   //console.log ("showItemsFromThisList:"+listID);
   for(var n = 0;n < $scope.trelloLists.length;n++){
     if($scope.trelloLists[n].id == listID && $scope.trelloLists[n].show == true){
+      return true;
+    }
+  }
+  return false;
+}
+
+$scope.showMembersFromThisTeam = function(team){
+  //console.log ("showItemsFromThisList:"+listID);
+  for(var n = 0;n < $scope.teams.length;n++){
+    if($scope.teams[n].name == team && $scope.teams[n].show == true){
       return true;
     }
   }
@@ -495,7 +512,7 @@ var buildStaffObject = function(response){
           var avatarImg = "/img/1x1transparent.png";
         }
           var userNameMatch = '@'+person.username;
-          var team = lodash.find($rootScope.teams,{members:[userNameMatch]});
+          var team = lodash.find($scope.teams,{members:[userNameMatch]});
           var sm = new UIFunctions.StaffMember(person.fullName,person.id,userNameMatch,avatarImg,team.name);
           $rootScope.staff.push(sm);
     });
