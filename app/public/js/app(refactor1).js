@@ -32,8 +32,8 @@ Date.prototype.subtractDays = function(daysToSubtract){
 var colours = ["orange","aqua","blue","purple","red","gray","green"];
 //var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
 var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
-//var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3"},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU"}]; //dev
-var trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3"},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU"}]; //live
+//var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3",show:true},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU",show:true}]; //dev
+$scope.trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3",show:true},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU",show:true},{idx:1,id:"5645e743fc62fc449d543e31",name:"Scheduled Maintenance",show:true}]; //live
 $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
@@ -95,6 +95,16 @@ function getstaff(){
 $http.get("https://trello.com/1/boards/"+trelloBoard+"/members?key="+trelloKey+"&token="+trelloToken)
 .success(buildStaffObject);
 
+}
+
+$scope.showItemsFromThisList = function(listID){
+  //console.log ("showItemsFromThisList:"+listID);
+  for(var n = 0;n < $scope.trelloLists.length;n++){
+    if($scope.trelloLists[n].id == listID && $scope.trelloLists[n].show == true){
+      return true;
+    }
+  }
+  return false;
 }
 
 var getCards =function getCards(arrList){
@@ -437,23 +447,23 @@ var parseCard = function(objCard){
 }
 
 function parseLeaveObject(response){
-  console.log("LEAVE:");
-  console.log(response);
-  console.log("STAFF:");
-  console.log($rootScope.staff)
+  //console.log("LEAVE:");
+  //console.log(response);
+  //console.log("STAFF:");
+  //console.log($rootScope.staff)
   angular.forEach(response, function buildLeaveObject(v,k){
     if(v.type=='commentCard'){
-      console.log(v.data.text);
+      //console.log(v.data.text);
       var smName = v.data.text.split('|');
-      console.log(smName[0]);
+      //console.log(smName[0]);
       for (var n=0;n < $rootScope.staff.length; n++){
-        console.log($rootScope.staff[n].fullName);
+        //console.log($rootScope.staff[n].fullName);
         if($rootScope.staff[n].fullName == smName[0]){
           smName[0]=$rootScope.staff[n].userName;
         }
       }
       var leaveObject = smName.join('|');
-      console.log(leaveObject);
+      //console.log(leaveObject);
     }
   })
 }
@@ -490,7 +500,7 @@ var buildStaffObject = function(response){
           $rootScope.staff.push(sm);
     });
   });
-getCards(trelloLists);
+getCards($scope.trelloLists);
 }
 
 function assignToStaff(assignment){

@@ -157,17 +157,20 @@ This is just "graph paper" - the actual elements are drawn in below
     </div>
   </div>
   <div class="Row week-row">
-    <div class=" dropdown-button filter-dropdown"><a href="https://forecastapp.com/95636/schedule/team#" class="dropdown-link"  >
+    <div class=" dropdown-button filter-dropdown"><a href="#" class="dropdown-link" ng-click="showFilters = !showFilters" >
       <span class="selected-filter">
-        Everyone
+        Filter List
       </span>
       <i class="icon row-expand-icon" data-icon="arrow-down"></i>
     </a>
-    <div class="dropdown" >
-      <div class=" list-select">
-        <a href="javascript:void(0);" >Everyone</a>
-        <hr>
-        <a href="javascript:void(0);" >projects</a>
+    <div class="" ng-show="showFilters">
+        <div class="filter-dropdown-list list-select">
+
+          <ul class="filterList" ng-repeat="trellolist in trelloLists">
+            <li>
+              <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>
+            </li>
+          </ul>
       </div>
     </div>
   </div>
@@ -200,7 +203,8 @@ This is just "graph paper" - the actual elements are drawn in below
       -->
       <div ng-show="projectsView == true" id = "projectsView" class="project-rows">
       <!--add "expanded-row" to user-row to flick switch-->
-      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" >
+      <!--Show projects where project.listID = trellolists.id and trellolists.show == true-->
+      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
       <div class="project-color"></div>
       <div class="content-parent-row">
 
