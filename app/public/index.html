@@ -21,7 +21,7 @@
     <script src="js/ui-bootstrap.min.js"></script>
     <script src="js/ui-bootstrap-tpls.min.js"></script>
     <script src="js/ng-lodash.min.js"></script>
-    <script src="js/app(refactor1).js"></script>
+    <script src="js/app(refactor2).js"></script>
     <script src="js/rootscope_functions.js"></script>
     <script src="js/assignProjectCtrl.js"></script>
     <script src="js/assignStaffCtrl.js"></script>
@@ -205,7 +205,8 @@ This is just "graph paper" - the actual elements are drawn in below
           </div>
       <!--add "expanded-row" to user-row to flick switch-->
       <!--Show projects where project.listID = trellolists.id and trellolists.show == true-->
-      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
+      <!--<div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">-->
+      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
       <div class="project-color"></div>
       <div class="content-parent-row">
 
