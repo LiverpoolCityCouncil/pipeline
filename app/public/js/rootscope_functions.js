@@ -281,11 +281,31 @@ var updateTrelloProject = function(project){
     })
 }
 
+var getNamedChecklistFromCard = function(objCard,checklistName,key,token){
+  //gets all the items from a named Checklist
+  //returns an array of objects
+
+  if(objCard.idChecklists.length >0){
+    //iterate checklists on card
+    for(var i=0;i<objCard.idChecklists.length;i++){
+      $http.get("https://trello.com/1/checklists/"+objCard.idChecklists[i]+"?key="+key+"&token="+token)
+      .then(function lookForTimeline(objCheckList){
+        angular.forEach(objCheckList, function extractMatchingChecklist(v,k){
+          if(k=="name" && v.toLowerCase()==checklistName.toLowerCase()){
+              return objCheckList;
+         }
+        })
+      })
+    }
+  }
+
+
+}
+
 var testme = function(){
 			console.log("testme function");
 			console.log($rootScope);
 		}
-
 
 
 	return{
@@ -304,7 +324,8 @@ var testme = function(){
     updateAssignmentInTrello: updateAssignmentInTrello,
     updateTrelloProject: updateTrelloProject,
     Milestone: Milestone,
-    parseDMY: parseDMY
+    parseDMY: parseDMY,
+    getNamedChecklistFromCard: getNamedChecklistFromCard
 		//---
 	}
 });

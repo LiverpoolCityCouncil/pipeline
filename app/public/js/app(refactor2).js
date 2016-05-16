@@ -384,6 +384,7 @@ var parseCard = function(objCard){
   project.newToPipeline = newToPipeline;
   project.labels=labels;
   var cardIDX = $rootScope.projects.push(project);
+
   if(objCard.idChecklists.length >0){
     //iterate checklists on card
     for(var i=0;i<objCard.idChecklists.length;i++){
@@ -559,14 +560,31 @@ var getTrelloConfig = function(configBoard,mainFunctionLoop){
       }
     });
 
-    config.teams=[];
+    $rootScope.config.teams=[];
     $http.get("https://trello.com/1/lists/"+config.lists.teams.id+"/cards?key="+config.trelloKey+"&token="+config.trelloToken)
     .success(function(teams){
-      console.log("TEAMS:");
       console.log(teams);
       for(var team=0;team<teams.length;team++){
+        console.log(teams[team].name+" team:");
         //Get the Members checklist
-
+        var thisTeam = {name:teams[team].name,members:[],show:true};
+        $http.get("https://trello.com/1/cards/"+teams[team].id+"/checklists?cards=none&card_fields=all&checkItems=all&checkItem_fields=name%2C%20nameData%2C%20pos%20and%20state&filter=all&fields=all&key="+config.trelloKey+"&token="+config.trelloToken)
+        .success(function(checklists){
+          for(var checklist=0;checklist<checklists.length;checklist++){
+            if(checklists[checklist].name="Members"){
+              console.log("Checklists:");
+              console.log(checklists);
+              $http.get("https://trello.com/1/checklists/"+checklists[checklist].id+"?key="+config.trelloKey+"&token="+config.trelloToken)
+              .success(function(checkItems){
+                for(var checkitem=0;checkitem<checkItems.length;checkitem++){
+                  console.log(checkItems[checkitem].name);
+                  thisTeam.members.push(checkItems[checkitem].name);
+                }
+              })
+            }
+          }
+        })
+        $rootScope.config.teams.push(thisTeam);
         // doesn't work as "team.checklists" isn't a real object - going to have to iterate
         // the ids in idChecklists, then go find the list with the name "Members" (the hard way)
         //
@@ -580,7 +598,9 @@ var getTrelloConfig = function(configBoard,mainFunctionLoop){
         // .success(function(checklist){
         //   console.log(checklist);
         //   <------
-        });
+        //});
+
+
       }
     });
 
