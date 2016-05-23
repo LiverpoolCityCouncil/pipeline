@@ -517,7 +517,7 @@ var buildStaffObject = function(response){
           $rootScope.staff.push(sm);
     });
   });
-  getCards($scope.trelloLists);
+getCards($scope.trelloLists);
 }
 
 function assignToStaff(assignment){
@@ -543,8 +543,23 @@ function assignToStaff(assignment){
 
 */
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 //parse out new leave items (these come in as comments to the leave ticket as thats all Zapier can do)
-//getLeaveObjects();
+getLeaveObjects();
+
+
 $scope.renderDayGrid($rootScope.today);
 getstaff();
 console.log($rootScope);
