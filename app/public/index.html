@@ -21,7 +21,7 @@
     <script src="js/ui-bootstrap.min.js"></script>
     <script src="js/ui-bootstrap-tpls.min.js"></script>
     <script src="js/ng-lodash.min.js"></script>
-    <script src="js/app(refactor1).js"></script>
+    <script src="js/app(refactor2).js"></script>
     <script src="js/rootscope_functions.js"></script>
     <script src="js/assignProjectCtrl.js"></script>
     <script src="js/assignStaffCtrl.js"></script>
@@ -33,13 +33,13 @@
 <body style="cursor: auto;" >
   <main >
   <!--
-                                           
- #    # ######   ##   #####  ###### #####  
- #    # #       #  #  #    # #      #    # 
- ###### #####  #    # #    # #####  #    # 
- #    # #      ###### #    # #      #####  
- #    # #      #    # #    # #      #   #  
- #    # ###### #    # #####  ###### #    # 
+
+ #    # ######   ##   #####  ###### #####
+ #    # #       #  #  #    # #      #    #
+ ###### #####  #    # #    # #####  #    #
+ #    # #      ###### #    # #      #####
+ #    # #      #    # #    # #      #   #
+ #    # ###### #    # #####  ###### #    #
 
   --><header>
     <div class="header-left">
@@ -95,13 +95,13 @@
 </ul>
 <div class=" timeline-view" ng-controller="TrelloController">
 <!--
-                                                  
- #####    ##   #   #        ####  #####  # #####  
- #    #  #  #   # #        #    # #    # # #    # 
- #    # #    #   #   ##### #      #    # # #    # 
- #    # ######   #         #  ### #####  # #    # 
- #    # #    #   #         #    # #   #  # #    # 
- #####  #    #   #          ####  #    # # #####  
+
+ #####    ##   #   #        ####  #####  # #####
+ #    #  #  #   # #        #    # #    # # #    #
+ #    # #    #   #   ##### #      #    # # #    #
+ #    # ######   #         #  ### #####  # #    #
+ #    # #    #   #         #    # #   #  # #    #
+ #####  #    #   #          ####  #    # # #####
 
 This is just "graph paper" - the actual elements are drawn in below
 
@@ -111,96 +111,102 @@ This is just "graph paper" - the actual elements are drawn in below
     <div class="timeline-day {{day.today}}" ng-repeat="day in week.days"></div>
   </div>
 </div>
-<div class="meta-rows" >
-<!--
-                                                        
-  ####   ####  #    # ##### #####   ####  #       ####  
- #    # #    # ##   #   #   #    # #    # #      #      
- #      #    # # #  #   #   #    # #    # #       ####  
- #      #    # #  # #   #   #####  #    # #           # 
- #    # #    # #   ##   #   #   #  #    # #      #    # 
-  ####   ####  #    #   #   #    #  ####  ######  ####  
 
--->
-  <div class="Row controls-row">
-    <div class="viewport-toggle left">
-      <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
-      <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
-    </div>
-    <div class="viewport-controls left">
-    <div ng-show="allExpanded==true">
-      <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
-        <span >
-          <i class="icon" data-icon="expand-all" ></i>
-        </span>
-      </a>
-    </div>
-    <div ng-show="allExpanded==false">
-      <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
-        <span >
-          <i class="icon" data-icon="collapse-all" ></i>
-        </span>
-      </a>
-    </div>
-
-    </div>
-    <div class="viewport-navigation right" >
-      <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
-        <i class="icon" data-icon="arrow-left"></i>
-      </a>
-      <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
-        This Week
-      </a>
-      <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
-        <i class="icon" data-icon="arrow-right"></i>
-      </a>
-    </div>
-  </div>
-  <div class="Row week-row">
-    <div class=" dropdown-button filter-dropdown"><a href="https://forecastapp.com/95636/schedule/team#" class="dropdown-link"  >
-      <span class="selected-filter">
-        Everyone
-      </span>
-      <i class="icon row-expand-icon" data-icon="arrow-down"></i>
-    </a>
-    <div class="dropdown" >
-      <div class=" list-select">
-        <a href="javascript:void(0);" >Everyone</a>
-        <hr>
-        <a href="javascript:void(0);" >projects</a>
-      </div>
-    </div>
-  </div>
-  <div class="row-viewport">
-    <div class="week-grid" >
-      <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
-        <div class="timeline-week-number">{{week.week}}</div>
-        <div class="timeline-week-dates">{{week.range}}</div>
-        <ol>
-          <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
-      {{day.date}}
-          </li>
-        </ol>
-    </div>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
       <!--
-                                                              
-       #####  #####   ####       # ######  ####  #####  ####  
-       #    # #    # #    #      # #      #    #   #   #      
-       #    # #    # #    #      # #####  #        #    ####  
-       #####  #####  #    #      # #      #        #        # 
-       #      #   #  #    # #    # #      #    #   #   #    # 
-       #      #    #  ####   ####  ######  ####    #    ####  
-                                                              
+
+       #####  #####   ####       # ######  ####  #####  ####
+       #    # #    # #    #      # #      #    #   #   #
+       #    # #    # #    #      # #####  #        #    ####
+       #####  #####  #    #      # #      #        #        #
+       #      #   #  #    # #    # #      #    #   #   #    #
+       #      #    #  ####   ####  ######  ####    #    ####
+
       -->
       <div ng-show="projectsView == true" id = "projectsView" class="project-rows">
+        <div class="meta-rows" >
+        <!--
+
+          ####   ####  #    # ##### #####   ####  #       ####
+         #    # #    # ##   #   #   #    # #    # #      #
+         #      #    # # #  #   #   #    # #    # #       ####
+         #      #    # #  # #   #   #####  #    # #           #
+         #    # #    # #   ##   #   #   #  #    # #      #    #
+          ####   ####  #    #   #   #    #  ####  ######  ####
+
+        -->
+          <div class="Row controls-row">
+            <div class="viewport-toggle left">
+              <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
+              <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
+            </div>
+            <div class="viewport-controls left">
+            <div ng-show="allExpanded==true">
+              <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
+                <span >
+                  <i class="icon" data-icon="expand-all" ></i>
+                </span>
+              </a>
+            </div>
+            <div ng-show="allExpanded==false">
+              <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
+                <span >
+                  <i class="icon" data-icon="collapse-all" ></i>
+                </span>
+              </a>
+            </div>
+
+            </div>
+            <div class="viewport-navigation right" >
+              <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
+                <i class="icon" data-icon="arrow-left"></i>
+              </a>
+              <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
+                This Week
+              </a>
+              <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
+                <i class="icon" data-icon="arrow-right"></i>
+              </a>
+            </div>
+          </div>
+          <div class="Row week-row">
+            <div class=" dropdown-button filter-dropdown"><a href="#" class="dropdown-link" ng-click="showProjectFilters = !showProjectFilters" >
+              <span class="selected-filter">
+                Filter List
+              </span>
+              <i class="icon row-expand-icon" data-icon="arrow-down"></i>
+            </a>
+            <div class="" ng-show="showProjectFilters">
+                <div class="filter-dropdown-list list-select">
+
+                  <ul class="filterList" ng-repeat="trellolist in trelloLists">
+                    <li>
+                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>
+                    </li>
+                  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row-viewport">
+            <div class="week-grid" >
+              <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
+                <div class="timeline-week-number">{{week.week}}</div>
+                <div class="timeline-week-dates">{{week.range}}</div>
+                <ol>
+                  <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
+              {{day.date}}
+                  </li>
+                </ol>
+            </div>
+                </div>
+              </div>
+            </div>
+          </div>
       <!--add "expanded-row" to user-row to flick switch-->
-      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" >
+      <!--Show projects where project.listID = trellolists.id and trellolists.show == true-->
+      <!--<div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">-->
+      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
       <div class="project-color"></div>
       <div class="content-parent-row">
 
@@ -261,9 +267,9 @@ This is just "graph paper" - the actual elements are drawn in below
               <div class="ui-resizable-handle ui-resizable-e" style="z-index:90"></div>
               <div class="ui-resizable-handle ui-resizable-w" style="z-index:90"></div>
           </div><!--/row-timeline-->
-        </div><!--/row-viewport-->  
+        </div><!--/row-viewport-->
       </div><!--/content-child-row-->
-      
+
       </div><!--??? what is this?-->
 
 
@@ -274,13 +280,13 @@ This is just "graph paper" - the actual elements are drawn in below
           <span >
             Edit
           </span>
-        </a>
+        </a>&nbsp;<a class="edit-content" href="https://trello.com/c/{{project.id}}" target="_blank" title="Open This project's Trello card in a new tab">Open in Trello</a>
         </div>
-        
+
       <div class="assign" ng-controller="assignStaffCtrl">
-      <button class="button pipelinebutton" ng-click="assignStaffOpen($parent.project)" type="button">
+      <a class="edit-content pipelinebutton" ng-click="assignStaffOpen($parent.project)" type="button">
         Assign Staff Member
-        </button>
+      </a>
       </div>
       </div>
       </div>
@@ -301,20 +307,96 @@ This is just "graph paper" - the actual elements are drawn in below
 
 
 <!--
-                                                              
-                                   
-  ####  #####   ##   ###### ###### 
- #        #    #  #  #      #      
-  ####    #   #    # #####  #####  
-      #   #   ###### #      #      
- #    #   #   #    # #      #      
-  ####    #   #    # #      #      
-                                    
-                                                              
+
+
+  ####  #####   ##   ###### ######
+ #        #    #  #  #      #
+  ####    #   #    # #####  #####
+      #   #   ###### #      #
+ #    #   #   #    # #      #
+  ####    #   #    # #      #
+
+
       -->
       <div ng-show="staffView == true" id = "staffView" class="staff-rows">
+        <div class="meta-rows" >
+        <!--
 
-      <div class="Row user-row" ng-class="{true:'expanded-row',false:''}[staffMember.showAssignments]" ng-repeat="staffMember in staff | orderBy:'team'" >
+          ####   ####  #    # ##### #####   ####  #       ####
+         #    # #    # ##   #   #   #    # #    # #      #
+         #      #    # # #  #   #   #    # #    # #       ####
+         #      #    # #  # #   #   #####  #    # #           #
+         #    # #    # #   ##   #   #   #  #    # #      #    #
+          ####   ####  #    #   #   #    #  ####  ######  ####
+
+        -->
+          <div class="Row controls-row">
+            <div class="viewport-toggle left">
+              <a ng-class="{true:'is-active',false:''}[staffView]" ng-click="projectsView=false;staffView=true;">Team</a>
+              <a ng-class="{true:'is-active',false:''}[projectsView]" ng-click="projectsView=true;staffView=false;" >Projects</a>
+            </div>
+            <div class="viewport-controls left">
+            <div ng-show="allExpanded==true">
+              <a class=" control-button toggle-button" ng-click="expandAll()" tabindex="0" tooltiptext="expand all" title="expand all">
+                <span >
+                  <i class="icon" data-icon="expand-all" ></i>
+                </span>
+              </a>
+            </div>
+            <div ng-show="allExpanded==false">
+              <a class=" control-button toggle-button" tabindex="0" tooltiptext="collapse all" title="collapse all" ng-click="collapseAll()">
+                <span >
+                  <i class="icon" data-icon="collapse-all" ></i>
+                </span>
+              </a>
+            </div>
+
+            </div>
+            <div class="viewport-navigation right" >
+              <a class=" control-button arrow-button previous-button"  tabindex="0" tooltiptext="" ng-click="backDate()">
+                <i class="icon" data-icon="arrow-left"></i>
+              </a>
+              <a class=" control-button this-week-button"  ng-click="thisWeek()"tabindex="0" tooltiptext="">
+                This Week
+              </a>
+              <a class=" control-button arrow-button next-button" ng-click="fwdDate()"  tabindex="0" tooltiptext="">
+                <i class="icon" data-icon="arrow-right"></i>
+              </a>
+            </div>
+          </div>
+          <div class="Row week-row">
+            <div class=" dropdown-button filter-dropdown"><a href="#" class="dropdown-link" ng-click="showStaffFilters = !showStaffFilters" >
+              <span class="selected-filter">
+                Filter List
+              </span>
+              <i class="icon row-expand-icon" data-icon="arrow-down"></i>
+            </a>
+            <div class="" ng-show="showStaffFilters">
+                <div class="filter-dropdown-list list-select">
+                  <ul class="filterList" ng-repeat="team in teams">
+                    <li>
+                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="team.show != team.show"/>
+                    </li>
+                  </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row-viewport">
+            <div class="week-grid" >
+              <div class="timeline-week {{week.active}}" ng-repeat="week in weekGrid">
+                <div class="timeline-week-number">{{week.week}}</div>
+                <div class="timeline-week-dates">{{week.range}}</div>
+                <ol>
+                  <li class="timeline-day {{day.today}}" ng-repeat="day in week.days">
+              {{day.date}}
+                  </li>
+                </ol>
+            </div>
+                </div>
+              </div>
+            </div>
+          </div>
+      <div class="Row user-row" ng-class="{true:'expanded-row',false:''}[staffMember.showAssignments]" ng-repeat="staffMember in staff | orderBy:'team'" ng-show="showMembersFromThisTeam(staffMember.team)">
       <div class=" content-parent-row">
 
         <div class="row-info" ng-click="staffMember.showAssignments = !staffMember.showAssignments;">
@@ -369,7 +451,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <div class="ui-resizable-handle ui-resizable-e" style="z-index:90"></div>
               <div class="ui-resizable-handle ui-resizable-w" style="z-index:90"></div>
           </div><!--/row-timeline-->
-        </div><!--/row-viewport-->  
+        </div><!--/row-viewport-->
       </div><!--/content-child-row-->
 
       </div><!--??? what is this?-->
@@ -377,16 +459,16 @@ This is just "graph paper" - the actual elements are drawn in below
 
       <div class=" content-child-row content-add-row">
       <div class="row-info">
-        <a class=" edit-content" href="https://forecastapp.com/95636/schedule/team/42322/edit">
+        <a class=" edit-content" href="#">
           <span >
             Edit
           </span>
         </a>
-       
+
       <div class="assign" ng-controller="assignProjectCtrl">
-      <button class="button pipelinebutton" ng-click="assignProjectOpen($parent.staffMember)" type="button">
+      <a class="edit-content pull-right" ng-click="assignProjectOpen($parent.staffMember)" type="button">
         Assign to project
-        </button>
+      </a>
       </div>
 </div>
       </div>
@@ -409,14 +491,14 @@ This is just "graph paper" - the actual elements are drawn in below
 </div>
 </div>
 <!--
-            _         __  __                       _       _ 
+            _         __  __                       _       _
     _      | |       / _|/ _|                     | |     | |
   _| |_ ___| |_ __ _| |_| |_   _ __ ___   ___   __| | __ _| |
  |_   _/ __| __/ _` |  _|  _| | '_ ` _ \ / _ \ / _` |/ _` | |
    |_| \__ \ || (_| | | | |   | | | | | | (_) | (_| | (_| | |
        |___/\__\__,_|_| |_|   |_| |_| |_|\___/ \__,_|\__,_|_|
-                                                             
-                                                             
+
+
 
 <div ng-controller="addStaffCtrl">
     <script type="text/ng-template" id="addStaffModal.html">
@@ -425,7 +507,7 @@ This is just "graph paper" - the actual elements are drawn in below
         </div>
 
         <div class="modal-body">
-        <form class="form-horizontal">  
+        <form class="form-horizontal">
           <div class="form-group">
             <label class="control-label col-sm-2" for="smName">Name</label>
             <div class="col-sm-8">
@@ -456,7 +538,7 @@ This is just "graph paper" - the actual elements are drawn in below
           <input type="button" class="btn btn-success" ng-click="addTeam()" value="add Team">
           </div>
           </div>
-        </form>  
+        </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -467,14 +549,14 @@ This is just "graph paper" - the actual elements are drawn in below
 </div>
 -->
 <!--
-      __                _                       _       _ 
+      __                _                       _       _
       \ \              (_)                     | |     | |
   _____\ \   _ __  _ __ _   _ __ ___   ___   __| | __ _| |
  |______> > | '_ \| '__| | | '_ ` _ \ / _ \ / _` |/ _` | |
        / /  | |_) | |  | | | | | | | | (_) | (_| | (_| | |
       /_/   | .__/|_|  | | |_| |_| |_|\___/ \__,_|\__,_|_|
-            | |       _/ |                                
-            |_|      |__/                                 
+            | |       _/ |
+            |_|      |__/
 -->
 <div ng-controller="assignProjectCtrl">
     <script type="text/ng-template" id="assignProjectModal.html">
@@ -483,10 +565,10 @@ This is just "graph paper" - the actual elements are drawn in below
         </div>
 
         <div class="modal-body">
-          <form class="form-horizontal"> 
+          <form class="form-horizontal">
             <div class="row">
               <label for="ap_projects" class="col-sm-1">project</label>
-              <div class="col-sm-8">  
+              <div class="col-sm-8">
                 <select id="ap_projects" ng-model="assignProject.prj">
                   <option value="">
                     Assign to Project…
@@ -494,7 +576,7 @@ This is just "graph paper" - the actual elements are drawn in below
                   <option ng-repeat = "project in projectList" value={{project.id}}>{{project.projectName}}</option>
                 </select>
               </div>
-              
+
               <label for="ap_hours">hrs</label>
               <div class="controls">
                 <select id="ap_hours" ng-model="assignProject.hours">
@@ -514,7 +596,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <label class="col-sm-1" for = "ap_startDate">start date</label>
               <div class="col-sm-4">
               <p class="input-group">
-                <input type="text" class="form-control" 
+                <input type="text" class="form-control"
                     datepicker-popup="dd/MM/yy"
                     ng-model="assignProject.startDate"
                     is-open="sdopened"
@@ -528,7 +610,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <label class="col-sm-1" for = "ap_endDate">end date</label>
               <div class="col-sm-4">
               <p class="input-group">
-                <input type="text" class="form-control" 
+                <input type="text" class="form-control"
                     datepicker-popup="dd/MM/yy"
                     ng-model="assignProject.endDate"
                     is-open="edopened"
@@ -548,7 +630,7 @@ This is just "graph paper" - the actual elements are drawn in below
               </div>
 
             </div>
-          </form>  
+          </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -560,14 +642,14 @@ This is just "graph paper" - the actual elements are drawn in below
 
 
 <!--
-               _            ______          _           _   
-              (_)           | ___ \        (_)         | |  
-  __ _ ___ ___ _  __ _ _ __ | |_/ / __ ___  _  ___  ___| |_ 
+               _            ______          _           _
+              (_)           | ___ \        (_)         | |
+  __ _ ___ ___ _  __ _ _ __ | |_/ / __ ___  _  ___  ___| |_
  / _` / __/ __| |/ _` | '_ \|  __/ '__/ _ \| |/ _ \/ __| __|
-| (_| \__ \__ \ | (_| | | | | |  | | | (_) | |  __/ (__| |_ 
+| (_| \__ \__ \ | (_| | | | | |  | | | (_) | |  __/ (__| |_
  \__,_|___/___/_|\__, |_| |_\_|  |_|  \___/| |\___|\___|\__|
-                  __/ |                   _/ |              
-                 |___/                   |__/               
+                  __/ |                   _/ |
+                 |___/                   |__/
 -->
 <div ng-controller="assignStaffCtrl">
     <script type="text/ng-template" id="assignStaffModal.html">
@@ -576,10 +658,10 @@ This is just "graph paper" - the actual elements are drawn in below
         </div>
 
         <div class="modal-body">
-          <form class="form-horizontal"> 
+          <form class="form-horizontal">
             <div class="row">
               <label for="as_staff" class="col-sm-1">staff member</label>
-              <div class="col-sm-8">  
+              <div class="col-sm-8">
                 <select id="as_staff" ng-model="assignStaff.staffMember" ng-options="staffMember.userName group by staffMember.team for staffMember in staffMemberList ">
                   <option value="">
                     Assign to Project…
@@ -587,7 +669,7 @@ This is just "graph paper" - the actual elements are drawn in below
 
                 </select>
               </div>
-              
+
               <label for="as_hours">hrs</label>
               <div class="controls">
                 <select id="as_hours" ng-model="assignStaff.hours">
@@ -599,7 +681,7 @@ This is just "graph paper" - the actual elements are drawn in below
                   <option>2</option>
                   <option>1</option>
                 </select>
-             
+
               </div>
             </div>
             <br>
@@ -607,7 +689,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <label class="col-sm-1" for = "as_startDate">start date</label>
               <div class="col-sm-4">
               <p class="input-group">
-                <input type="text" class="form-control" 
+                <input type="text" class="form-control"
                     datepicker-popup="dd/MM/yy"
                     ng-model="assignStaff.startDate"
                     is-open="sdopened"
@@ -621,7 +703,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <label class="col-sm-1" for = "as_endDate">end date</label>
               <div class="col-sm-4">
               <p class="input-group">
-                <input type="text" class="form-control" 
+                <input type="text" class="form-control"
                     datepicker-popup="dd/MM/yy"
                     ng-model="assignStaff.endDate"
                     is-open="edopened"
@@ -640,7 +722,7 @@ This is just "graph paper" - the actual elements are drawn in below
                 <textarea id="as_notes" ng-model="assignStaff.notes"></textarea>
               </div>
             </div>
-          </form>  
+          </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -648,16 +730,16 @@ This is just "graph paper" - the actual elements are drawn in below
         </div>
     </script>
 </div>
-<!----------------------------------------//-> 
+<!----------------------------------------//->
 
-<!-- 
-         _ _ _    ___          _                                  _   
-         | (_) |  / _ \        (_)                                | |  
-  ___  __| |_| |_/ /_\ \___ ___ _  __ _ _ __  _ __ ___   ___ _ __ | |_ 
+<!--
+         _ _ _    ___          _                                  _
+         | (_) |  / _ \        (_)                                | |
+  ___  __| |_| |_/ /_\ \___ ___ _  __ _ _ __  _ __ ___   ___ _ __ | |_
  / _ \/ _` | | __|  _  / __/ __| |/ _` | '_ \| '_ ` _ \ / _ \ '_ \| __|
-|  __/ (_| | | |_| | | \__ \__ \ | (_| | | | | | | | | |  __/ | | | |_ 
+|  __/ (_| | | |_| | | \__ \__ \ | (_| | | | | | | | | |  __/ | | | |_
  \___|\__,_|_|\__\_| |_/___/___/_|\__, |_| |_|_| |_| |_|\___|_| |_|\__|
-                                   __/ |                               
+                                   __/ |
                                   |___/                                -->
 
 <div ng-controller="editAssignmentCtrl">
@@ -667,10 +749,10 @@ This is just "graph paper" - the actual elements are drawn in below
         </div>
 
         <div class="modal-body">
-          <form class="form-horizontal"> 
+          <form class="form-horizontal">
             <div class="row">
               <label for="ea_staff" class="col-sm-3">re-assign?:</label>
-              <div class="col-sm-5">  
+              <div class="col-sm-5">
                 <select id="ea_staff" ng-model="editAssignment.staffMember" ng-options="staffMember.userName group by staffMember.team for staffMember in staffMemberList " ng-change="reassign()">
                 </select>
               </div>
@@ -685,7 +767,7 @@ This is just "graph paper" - the actual elements are drawn in below
                   <option>2</option>
                   <option>1</option>
                 </select>
-             
+
               </div>
             </div>
             <br>
@@ -693,7 +775,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <label class="col-sm-1" for = "ea_startDate">start date</label>
               <div class="col-sm-4">
               <p class="input-group">
-                <input type="text" class="form-control" 
+                <input type="text" class="form-control"
                     datepicker-popup="dd/MM/yy"
                     ng-model="editAssignment.startDate"
                     is-open="sdopened"
@@ -707,7 +789,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <label class="col-sm-1" for = "ea_endDate">end date</label>
               <div class="col-sm-4">
               <p class="input-group">
-                <input type="text" class="form-control" 
+                <input type="text" class="form-control"
                     datepicker-popup="dd/MM/yy"
                     ng-model="editAssignment.endDate"
                     is-open="edopened"
@@ -730,7 +812,7 @@ This is just "graph paper" - the actual elements are drawn in below
               <input type="checkbox" ng-checked="editAssignment.state">
               </div>
             </div>
-          </form>  
+          </form>
         </div>
         <div class="modal-footer">
             <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -738,17 +820,17 @@ This is just "graph paper" - the actual elements are drawn in below
         </div>
     </script>
 </div>
-<!----------------------------------------//-> 
+<!----------------------------------------//->
 
-<!-- 
-          _ _ _  ______          _           _   
-         | (_) | | ___ \        (_)         | |  
-  ___  __| |_| |_| |_/ / __ ___  _  ___  ___| |_ 
+<!--
+          _ _ _  ______          _           _
+         | (_) | | ___ \        (_)         | |
+  ___  __| |_| |_| |_/ / __ ___  _  ___  ___| |_
  / _ \/ _` | | __|  __/ '__/ _ \| |/ _ \/ __| __|
-|  __/ (_| | | |_| |  | | | (_) | |  __/ (__| |_ 
+|  __/ (_| | | |_| |  | | | (_) | |  __/ (__| |_
  \___|\__,_|_|\__\_|  |_|  \___/| |\___|\___|\__|
-                               _/ |              
-                              |__/                                             
+                               _/ |
+                              |__/
 -->
 
 <div ng-controller="editProjectCtrl">
@@ -758,10 +840,10 @@ This is just "graph paper" - the actual elements are drawn in below
     </div>
 
     <div class="modal-body">
-      <form class="form-horizontal"> 
+      <form class="form-horizontal">
         <div class="row">
           <label for="ep_pmList" class="col-sm-3">PM:</label>
-          <div class="col-sm-5">  
+          <div class="col-sm-5">
             <select id="ep_pmList" ng-model="project.pm" ng-options="pm.userName group by pm.team for pm in pmList ">
             </select>
           </div>
@@ -769,7 +851,7 @@ This is just "graph paper" - the actual elements are drawn in below
         <br>
         <div class="row">
           <label for="ep_colour" class="col-sm-3">colour:</label>
-          <div class="col-sm-5">  
+          <div class="col-sm-5">
             <select id="ep_colour" ng-model="project.colour" ng-options="colour.name for colour in colours">
             </select>
           </div>
@@ -777,7 +859,7 @@ This is just "graph paper" - the actual elements are drawn in below
         <br>
         <div class="row">
           <label for="ep_ref" class="col-sm-3">Project Ref:</label>
-          <div class="col-sm-5">  
+          <div class="col-sm-5">
             <input type="text" id="ep_ref" ng-model="project.spiderRef" />
           </div>
         </div>
@@ -786,7 +868,7 @@ This is just "graph paper" - the actual elements are drawn in below
           <label class="col-sm-1" for = "ep_startDate">start date</label>
           <div class="col-sm-4">
           <p class="input-group">
-            <input type="text" id="ep_startDate" class="form-control" 
+            <input type="text" id="ep_startDate" class="form-control"
                 datepicker-popup="dd/MM/yy"
                 ng-model="project.startDate"
                 is-open="sdopened"
@@ -800,7 +882,7 @@ This is just "graph paper" - the actual elements are drawn in below
           <label class="col-sm-1" for = "ep_dueDate">end date</label>
           <div class="col-sm-4">
           <p class="input-group">
-            <input type="text" id="ep_dueDate" class="form-control" 
+            <input type="text" id="ep_dueDate" class="form-control"
                 datepicker-popup="dd/MM/yy"
                 ng-model="project.deadline"
                 is-open="edopened"
@@ -814,12 +896,12 @@ This is just "graph paper" - the actual elements are drawn in below
           <br>
           <div class="row">
           <label for="ep_trelloBoard" class="col-sm-3">Trello Board (paste URL):</label>
-          <div class="col-sm-5">  
+          <div class="col-sm-5">
             <input type="text" id="ep_trelloBoard" ng-model="project.trelloBoard" />
           </div>
         </div>
         </div>
-      </form>  
+      </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -827,16 +909,16 @@ This is just "graph paper" - the actual elements are drawn in below
     </div>
   </script>
 </div>
-<!----------------------------------------//-> 
+<!----------------------------------------//->
 
 
-<!-- 
-        __  __ _ _           _                   
-    _  |  \/  (_) | ___  ___| |_ ___  _ __   ___ 
+<!--
+        __  __ _ _           _
+    _  |  \/  (_) | ___  ___| |_ ___  _ __   ___
   _| |_| |\/| | | |/ _ \/ __| __/ _ \| '_ \ / _ \
  |_   _| |  | | | |  __/\__ \ || (_) | | | |  __/
    |_| |_|  |_|_|_|\___||___/\__\___/|_| |_|\___|
-                                                         
+
 -->
 
 <div ng-controller="addMilestoneCtrl">
@@ -846,10 +928,10 @@ This is just "graph paper" - the actual elements are drawn in below
     </div>
 
     <div class="modal-body">
-      <form class="form-horizontal"> 
+      <form class="form-horizontal">
         <div class="row">
           <label for="am_milestone" class="col-sm-3">Milestone:</label>
-          <div class="col-sm-5">  
+          <div class="col-sm-5">
             <input type="text" id="am_milestone" ng-model="milestone.name" />
           </div>
         </div>
@@ -858,7 +940,7 @@ This is just "graph paper" - the actual elements are drawn in below
           <label class="col-sm-1" for = "am_milestoneDate">date</label>
           <div class="col-sm-4">
           <p class="input-group">
-            <input type="text" id="am_milestoneDate" class="form-control" 
+            <input type="text" id="am_milestoneDate" class="form-control"
                 datepicker-popup="dd/MM/yy"
                 ng-model="selectedDate"
                 is-open="sdopened"
@@ -870,7 +952,7 @@ This is just "graph paper" - the actual elements are drawn in below
           </p>
           </div>
         </div>
-      </form>  
+      </form>
     </div>
     <div class="modal-footer">
         <button class="btn btn-primary" ng-click="ok()">OK</button>
@@ -878,7 +960,7 @@ This is just "graph paper" - the actual elements are drawn in below
     </div>
   </script>
 </div>
-<!----------------------------------------//-> 
+<!----------------------------------------//->
 </main>
 
 </body>

@@ -2,14 +2,14 @@ angular.module('pipeline')
 .factory('UIFunctions',function UIFunctionsFactory($rootScope,$http){
 
 /*
-                                                                                                                                                              
-  ####   ####  #    #  ####  ##### #####  #    #  ####  #####  ####  #####   ####  
- #    # #    # ##   # #        #   #    # #    # #    #   #   #    # #    # #      
- #      #    # # #  #  ####    #   #    # #    # #        #   #    # #    #  ####  
- #      #    # #  # #      #   #   #####  #    # #        #   #    # #####       # 
- #    # #    # #   ## #    #   #   #   #  #    # #    #   #   #    # #   #  #    # 
-  ####   ####  #    #  ####    #   #    #  ####   ####    #    ####  #    #  ####  
-                                                                                                                                                              
+
+  ####   ####  #    #  ####  ##### #####  #    #  ####  #####  ####  #####   ####
+ #    # #    # ##   # #        #   #    # #    # #    #   #   #    # #    # #
+ #      #    # # #  #  ####    #   #    # #    # #        #   #    # #    #  ####
+ #      #    # #  # #      #   #   #####  #    # #        #   #    # #####       #
+ #    # #    # #   ## #    #   #   #   #  #    # #    #   #   #    # #   #  #    #
+  ####   ####  #    #  ####    #   #    #  ####   ####    #    ####  #    #  ####
+
 */
 
 var StaffMember =function(fullName,id,userName,avatarhash,team){
@@ -75,7 +75,7 @@ var parseDMY = function(value) {
 }
 
 var renderStaffBar = function(assignment,colour,capacity){
-  
+
   var sdArray = assignment.startDate.split('/');
   var startDate = new Date(sdArray[2],sdArray[1]-1,sdArray[0],0,0,1,1);
   var edArray = assignment.endDate.split('/');
@@ -92,7 +92,7 @@ var renderStaffBar = function(assignment,colour,capacity){
   var assignmentLength = workingDaysBetweenDates(startDate, endDate);
 
   // set bar data in project->assignment
-  var barwidth = assignmentLength*60;   
+  var barwidth = assignmentLength*60;
 
     //Calculate Hours worked and place in the this.capacity array
 
@@ -131,14 +131,14 @@ var renderStaffBar = function(assignment,colour,capacity){
 }
 
 var workingDaysBetweenDates =function(startDate, endDate) {
-    
+
     // Calculate days between dates
     var millisecondsPerDay = 86400 * 1000; // Day in milliseconds
     startDate.setHours(0,0,0,1);  // Start just after midnight
     endDate.setHours(23,59,59,999);  // End just before midnight
-    var diff = endDate - startDate;  // Milliseconds between datetime objects    
+    var diff = endDate - startDate;  // Milliseconds between datetime objects
     var days = Math.ceil(diff / millisecondsPerDay);
-    
+
     // Subtract two weekend days for every week in between
     var weeks = Math.floor(days / 7);
     var days = days - (weeks * 2);
@@ -146,19 +146,19 @@ var workingDaysBetweenDates =function(startDate, endDate) {
     // Handle special cases
     var startDay = startDate.getDay();
     var endDay = endDate.getDay();
-    
-    // Remove weekend not previously removed.   
-    if (startDay - endDay > 1)         
-        days = days - 2;      
-    
+
+    // Remove weekend not previously removed.
+    if (startDay - endDay > 1)
+        days = days - 2;
+
     // Remove start day if span starts on Sunday but ends before Saturday
     if (startDay == 0 && endDay != 6)
-        days = days - 1  
-            
+        days = days - 1
+
     // Remove end day if span ends on Saturday but starts after Sunday
     if (endDay == 6 && startDay != 0)
-        days = days - 1  
-    
+        days = days - 1
+
     return days;
 }
 var barCoords = function(start,end){
@@ -203,7 +203,7 @@ var parseStaffAssignments = function(){
 	  staffMember.assignments.forEach(function(assignment,colour,capacity){
 	    renderStaffBar(assignment,colour,staffMember.capacity);
 	  })
-	})			
+	})
 }
 
 var parsePrjAssignments = function(){
@@ -261,7 +261,7 @@ var postAssignmentToTrello = function(project,shorthand){
 
 var updateAssignmentInTrello = function(project,assignment,shorthand){
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";  
+  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
   $http.put('/updateAssignment', {name: shorthand,projectid:project.id,timeline:project.timelineID,assignmentID:assignment.assignmentID,key:trelloKey,token:trelloToken})
     .then(function(response){
 
@@ -272,7 +272,7 @@ var updateAssignmentInTrello = function(project,assignment,shorthand){
 
 var updateTrelloProject = function(project){
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";  
+  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
   $http.put('/updateProject', {id: project.id,name: project.projectName,desc:project.notes,due:project.deadline,key:trelloKey,token:trelloToken})
     .then(function(response){
 
@@ -281,11 +281,31 @@ var updateTrelloProject = function(project){
     })
 }
 
+var getNamedChecklistFromCard = function(objCard,checklistName,key,token){
+  //gets all the items from a named Checklist
+  //returns an array of objects
+
+  if(objCard.idChecklists.length >0){
+    //iterate checklists on card
+    for(var i=0;i<objCard.idChecklists.length;i++){
+      $http.get("https://trello.com/1/checklists/"+objCard.idChecklists[i]+"?key="+key+"&token="+token)
+      .then(function lookForTimeline(objCheckList){
+        angular.forEach(objCheckList, function extractMatchingChecklist(v,k){
+          if(k=="name" && v.toLowerCase()==checklistName.toLowerCase()){
+              return objCheckList;
+         }
+        })
+      })
+    }
+  }
+
+
+}
+
 var testme = function(){
 			console.log("testme function");
 			console.log($rootScope);
 		}
-
 
 
 	return{
@@ -295,7 +315,7 @@ var testme = function(){
 		parsePrjAssignments: parsePrjAssignments,
 		setBarPosition: setBarPosition,
 		workingDaysBetweenDates: workingDaysBetweenDates,
-		renderStaffBar: renderStaffBar, 
+		renderStaffBar: renderStaffBar,
 		StaffMember: StaffMember,
 		Assignment: Assignment,
 		Project: Project,
@@ -304,8 +324,8 @@ var testme = function(){
     updateAssignmentInTrello: updateAssignmentInTrello,
     updateTrelloProject: updateTrelloProject,
     Milestone: Milestone,
-    parseDMY: parseDMY
+    parseDMY: parseDMY,
+    getNamedChecklistFromCard: getNamedChecklistFromCard
 		//---
 	}
 });
-
