@@ -373,35 +373,64 @@ function dateOrdinal(inDate){
   return dop;
 }
 
-function parseProjectTimeline(tl,projectName){
+function parseProjectTimeline(tl,projectName,prjStartDate){
   //work out the calculated start date and end date here.
   var timeline = {assignments:[],milestones:[]};
-  var csd=0;
-  var ced=0;
+  var csd=0, asd=0;
+  var ced=0, aed=0;
   for(var n=0;n<tl.checkItems.length;n++){
     //don't bother with ticked off items
     if(tl.checkItems[n].state == 'incomplete'){
-      if(tl.checkItems[n].name.substring(0,1)=="@"){
+      if(tl.checkItems[n].name.substring(0,2)!="MS"){
         var assignment=tl.checkItems[n].name.split('|');
         var hours = 7;
         if(assignment[3]){
           hours=assignment[3];
         }
         var staffMember = assignment[0].replace(' ','');//remove spaces from hand-cranked assignments!
-        var dates=assignment[1].split('-');
-        if(csd==0||dateOrdinal(dates[0])<dateOrdinal(csd)){
-          csd = dates[0];
+        //check for date styles...
+        //------------------------
+        //Assignments can either have manual date ranges in the form dd/MM/yyyy-dd/MM/yyyy
+        //or can be based upon the start date in the format: +n:d where n=days after start date and d=duration (in working days)
+        //
+        //console.log(typeof assignment[1]);
+        if(assignment[1].substr(0,1) == "+"){
+          var extractDateParts = assignment[1].substr(1,assignment[1].length);
+          var dateCalcParts = assignment[1].split(":");
+          var startDateNumberPart = dateCalcParts[0].substr(1,dateCalcParts[0].length);
+          var sdnpAsInt=parseInt(startDateNumberPart);
+          var atsd = sdnpAsInt;
+          asd = UIFunctions.addWorkingDaysToDate(prjStartDate,atsd);
+          aed = UIFunctions.addWorkingDaysToDate(asd,parseInt(dateCalcParts[1]));
+          console.log(assignment[2]+" :"+asd+" -> "+aed);
         }
-        if(ced==0||dateOrdinal(dates[1])>dateOrdinal(ced)){
-          ced = dates[1];
+        else
+        {
+          var dates=assignment[1].split('-');
+          asd = dates[0];
+          aed = dates[1];
         }
-        var thisAssignment = new UIFunctions.Assignment(timeline.id,projectName,staffMember,dates[0],dates[1],assignment[2],hours);
+        if(csd==0||dateOrdinal(asd)<dateOrdinal(csd)){
+          csd = asd;
+        }
+        if(ced==0||dateOrdinal(aed)>dateOrdinal(ced)){
+          ced = aed;
+        }
+        var thisAssignment = new UIFunctions.Assignment(timeline.id,projectName,staffMember,asd,aed,assignment[2],hours);
         thisAssignment.assignmentID=tl.checkItems[n].id;
         timeline.assignments.push(thisAssignment);
       }
       else if(tl.checkItems[n].name.substring(0,2)=="MS"){
         var milestone = tl.checkItems[n].name.split('|');
-        var thisMilestone = new UIFunctions.Milestone(milestone[1],milestone[2]);
+        var datePart;
+        if(milestone[1].substring(0,1)=="+"){
+          var extractNumber = parseInt(milestone[1].substring(1,milestone[1].length));
+          datePart = UIFunctions.addWorkingDaysToDate(prjStartDate,extractNumber);
+        }
+        else {
+          datePart = milestone[1];
+        }
+        var thisMilestone = new UIFunctions.Milestone(datePart,milestone[2]);
         timeline.milestones.push(thisMilestone);
       }
     }
@@ -414,10 +443,17 @@ function parseProjectTimeline(tl,projectName){
 var parseCard = function(objCard){
   var description=splitDesc(objCard.desc);
   var newToPipeline = true;
+  var prjStartDate = UIFunctions.shortUKDate($rootScope.today);
   if(description){
       newToPipeline = false;
+      if(description.startDate){
+      if(description.startDate!="undefined"){
+        prjStartDate = description.startDate;
+      }
+    }
   }
   var projectName = removeSpiderRefs(objCard.name);
+  //console.log(projectName+":"+prjStartDate);
   var cardid=objCard.id;
   //build labels array
   var labels = [];
@@ -439,7 +475,7 @@ var parseCard = function(objCard){
         angular.forEach(objCheckList, function extractTimeline(v,k){
           if(k=="name" && v.toLowerCase()=="project timeline"){
             $rootScope.projects[cardIDX-1].timelineID = objCheckList.id;
-            var timeline = parseProjectTimeline(objCheckList,projectName);
+            var timeline = parseProjectTimeline(objCheckList,projectName,prjStartDate);
             //add array of assignments to project
             $rootScope.projects[cardIDX-1].assignments=timeline.assignments;
             $rootScope.projects[cardIDX-1].milestones=timeline.milestones;

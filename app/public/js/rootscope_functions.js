@@ -1,5 +1,5 @@
 angular.module('pipeline')
-.factory('UIFunctions',function UIFunctionsFactory($rootScope,$http){
+.factory('UIFunctions',function UIFunctionsFactory($rootScope,$http,$filter){
 
 /*
 
@@ -59,6 +59,11 @@ var CapacityItem = function (idx,hours,cssClass){
   this.idx = idx;
   this.hours = 0;
   this.cssClass='';
+}
+
+var shortUKDate = function(dateToParse){
+  var strDate = $filter('date')(dateToParse, 'dd/MM/yyyy');
+  return strDate;
 }
 
 var Milestone = function(date,name){
@@ -161,6 +166,29 @@ var workingDaysBetweenDates =function(startDate, endDate) {
 
     return days;
 }
+
+var getDateFromUKFormatString = function(ukDate){
+  var splitme=ukDate.split("/");
+  var dateToReturn = new Date(parseInt(splitme[2]),parseInt(splitme[1])-1,parseInt(splitme[0]));
+  return dateToReturn;
+}
+
+function addWorkingDaysToDate(startDate,days) { //myDate = starting date, days = no. working days to add.
+    var myDate=getDateFromUKFormatString(startDate);
+    var temp_date = new Date();
+    var i = 0;
+    var days_to_add = 0;
+    while (i < (days)){
+      temp_date = new Date(myDate.getTime() + (days_to_add*24*60*60*1000));
+				//0 = Sunday, 6 = Saturday, if the date not equals a weekend day then increase by 1
+				if ((temp_date.getDay() != 0) && (temp_date.getDay() != 6)){
+					i+=1;
+				}
+				days_to_add += 1;
+			}
+		return shortUKDate(new Date(myDate.getTime() + days_to_add*24*60*60*1000));
+}
+
 var barCoords = function(start,end){
   var sdArray = start.split('/');
   var startDate = new Date(sdArray[2],sdArray[1]-1,sdArray[0],0,0,1,1);
@@ -304,7 +332,10 @@ var testme = function(){
     updateAssignmentInTrello: updateAssignmentInTrello,
     updateTrelloProject: updateTrelloProject,
     Milestone: Milestone,
-    parseDMY: parseDMY
+    parseDMY: parseDMY,
+    shortUKDate: shortUKDate,
+    addWorkingDaysToDate: addWorkingDaysToDate,
+    getDateFromUKFormatString: getDateFromUKFormatString
 		//---
 	}
 });
