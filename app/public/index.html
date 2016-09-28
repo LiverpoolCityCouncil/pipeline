@@ -29,6 +29,7 @@
     <script src="js/editAssignmentCtrl.js"></script>
     <script src="js/editProjectCtrl.js"></script>
     <script src="js/addMilestoneCtrl.js"></script>
+    <script src="js/angular-cookies.min.js"></script>
 </head>
 <body style="cursor: auto;" >
   <main >
@@ -84,7 +85,7 @@
         <strong>Dominic Jones</strong>
         LDL
       </div>
-      <a  >My Profile</a>
+      <a >My Profile</a>
       <a href="javascript:void(0)" >Sign Out</a>
     </div>
   </div>
@@ -182,7 +183,8 @@ This is just "graph paper" - the actual elements are drawn in below
 
                   <ul class="filterList" ng-repeat="trellolist in trelloLists">
                     <li>
-                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>
+                      <!--<span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>-->
+                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="changelist(trellolist)"/>
                     </li>
                   </ul>
               </div>
@@ -374,7 +376,7 @@ This is just "graph paper" - the actual elements are drawn in below
                 <div class="filter-dropdown-list list-select">
                   <ul class="filterList" ng-repeat="team in teams">
                     <li>
-                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="team.show != team.show"/>
+                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="team.show != team.show;"/>
                     </li>
                   </ul>
               </div>

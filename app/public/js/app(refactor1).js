@@ -1,9 +1,8 @@
 'use strict';
 
-var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap'])
-  .controller('TrelloController', function($scope,$rootScope, lodash, $http, UIFunctions){
+var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap','ngCookies']);
 
-
+pipeline.controller('TrelloController',function($rootScope,$scope,lodash, $http, UIFunctions){
 
 Date.prototype.getWeek = function() {
   var onejan = new Date(this.getFullYear(),0,1);
@@ -35,8 +34,8 @@ var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
 //var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3",show:true},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU",show:true}]; //dev
 $scope.trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3",show:true},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU",show:true},{idx:1,id:"5645e743fc62fc449d543e31",name:"Scheduled Maintenance",show:true}]; //live
 $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
-var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
+var trelloKey = "YOUR TRELLO KEY";
+var trelloToken = "YOUR TRELLO TOKEN";
 
 $scope.teams = [
 {
@@ -356,6 +355,10 @@ function workingDaysBetweenDates(startDate, endDate) {
     $scope.mousepos={row:index,col:(Math.ceil(event.clientX/60)*60)-360};
   }
 
+  $scope.changelist= function(trelloList){
+    trelloList.show != trelloList.show;
+    $cookies.put('this','that');
+  }
 
 /*
 
@@ -402,7 +405,7 @@ function parseProjectTimeline(tl,projectName,prjStartDate){
           var atsd = sdnpAsInt;
           asd = UIFunctions.addWorkingDaysToDate(prjStartDate,atsd);
           aed = UIFunctions.addWorkingDaysToDate(asd,parseInt(dateCalcParts[1]));
-          console.log(assignment[2]+" :"+asd+" -> "+aed);
+          //console.log(assignment[2]+" :"+asd+" -> "+aed);
         }
         else
         {
@@ -580,18 +583,6 @@ function assignToStaff(assignment){
 */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 //parse out new leave items (these come in as comments to the leave ticket as thats all Zapier can do)
 getLeaveObjects();
 
@@ -601,6 +592,9 @@ getstaff();
 console.log($rootScope);
 console.log($scope);
 });
+
+
+
 
 pipeline.filter('validLabels',function($rootScope){
   return function (items) {

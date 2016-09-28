@@ -529,8 +529,8 @@ var getTrelloConfig = function(configBoard,mainFunctionLoop){
 $rootScope.config={};
   $rootScope.config.lists=[];
   $rootScope.config.configBoard = configBoard;
-  $rootScope.config.trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-  $rootScope.config.trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
+  $rootScope.config.trelloKey = "YOUR TRELLO KEY";
+  $rootScope.config.trelloToken = "YOUR TRELLO TOKEN";
   //Let's go get some config...
   $http.get("https://trello.com/1/boards/"+configBoard+"/lists?cards=none&card_fields=all&filter=open&fields=all&key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
   .success(function(response){
