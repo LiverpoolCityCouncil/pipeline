@@ -89,17 +89,16 @@
       Help
     </a>
     <div class="dropdown-button user-dropdown" >
-    <a class="dropdown-link"  >
+    <a class="dropdown-link"  ng-click="acctDropdown = !acctDropdown">
       <img ng-src="{{loggedInUser.avatarImg}}" alt="{{loggedInUser.fullName}}"/>
       <i class="icon" data-icon="arrow-down-white"></i>
     </a>
-    <div class="dropdown" >
+    <div class="dropdown" ng-show="acctDropdown">
       <div class="user-information">
         <strong>{{loggedInUser.fullName}}</strong>
-        LDL
       </div>
-      <a  >My Profile</a>
-      <a href="javascript:void(0)" >Sign Out</a>
+      <a>My Profile</a>
+      <a href="javascript:void(0)" ng-click="signout()">Sign Out</a>
     </div>
   </div>
 </nav>

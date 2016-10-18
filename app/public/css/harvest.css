@@ -225,7 +225,6 @@ main {
     border: 1px solid rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    display: none;
     font-size: 14px;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;

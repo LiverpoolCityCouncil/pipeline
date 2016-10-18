@@ -44,7 +44,7 @@ Date.prototype.subtractDays = function(daysToSubtract){
 */
 $scope.splash=true;
 $scope.startscreen=true;
-
+$scope.acctDropdown=false;
 var colours = ["orange","aqua","blue","purple","red","gray","green"];
 //var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
 var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
@@ -647,11 +647,14 @@ $scope.firstRun = function(){
   $rootScope.trelloToken=localStorage.getItem('trello_token');
   $http.get("https://trello.com/1/tokens/"+$rootScope.trelloToken+"/member?key="+trelloKey+"&token="+$rootScope.trelloToken)
 .success($scope.go);
-
-
 }
 
-
+$scope.signout = function(){
+  localStorage.removeItem('trello_token');
+  $scope.splash = true;
+  $scope.startscreen=true;
+  $scope.acctDropdown=false;
+}
 
 /*
 

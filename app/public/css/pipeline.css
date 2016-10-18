@@ -39,3 +39,4 @@ header{z-index:10;}
 .startscreen{position:absolute;width:100%;height:1000px;background:url(/img/pipeline.jpg) top center;z-index:8;}
 .sscr{text-align:center;}
 .sscr button{padding:20px;border-radius: 7px!important;background-color:black;color:white;font-size: 20px;opacity:.5;border:2px solid white;}
+.sscr button:hover{opacity:.8;}
