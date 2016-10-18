@@ -17,11 +17,16 @@
   <script src="js/md5.js"></script>
   <script src="js/avatar.js"></script>
   <!--MVC-->
-    <script src="js/angular.min.js"></script>
+    <script src="js/angular.js"></script>
+    <script src="js/ng-lodash.min.js"></script>
     <script src="js/ui-bootstrap.min.js"></script>
     <script src="js/ui-bootstrap-tpls.min.js"></script>
-    <script src="js/ng-lodash.min.js"></script>
-    <script src="js/app(refactor2).js"></script>
+    <script src="js/angular-cookies.js"></script>
+    <script src="js/angular-route.js"></script>
+    <script src="js/satellizer.js"></script>
+    <script src="js/angular-trello-api-client.js"></script>
+  <!--My modules-->   
+    <script src="js/app(refactor1).js"></script>
     <script src="js/rootscope_functions.js"></script>
     <script src="js/assignProjectCtrl.js"></script>
     <script src="js/assignStaffCtrl.js"></script>
@@ -31,7 +36,19 @@
     <script src="js/addMilestoneCtrl.js"></script>
 </head>
 <body style="cursor: auto;" >
-  <main >
+  <main ng-controller="TrelloController">
+          <!--splash screens-->
+
+        <div class="splash sscr" ng-show="splash">
+          <h1>Welcome to pipeline.</h1><br/><br/><p>Pipeline needs to connect to your trello account in order to work.</p><button class="primary" ng-click="login()">connect</button>
+        </div>
+
+        <div class="startscreen sscr" ng-show="startscreen">
+          <h1>All good in the hood.<br/><br/><button class="primary" ng-click="firstRun()">let&apos;s do this</button></h1>
+        </div>
+
+
+        <!-- end splash screens-->
   <!--
 
  #    # ######   ##   #####  ###### #####
@@ -68,20 +85,17 @@
 
   </div>
   <nav class="header-right">
-    <!--<a class=" billing-header-message test-admin-trial-message" href="https://forecastapp.com/95636/upgrade">
-      28 days left in trial — <strong>Upgrade</strong>
-    </a>-->
-
     <a class="header-button"  >
       Help
     </a>
-    <div class="dropdown-button user-dropdown"><a  class="dropdown-link"  >
-      <img   src="img/67d71aa79e2dafb92f1a44a6ad8d113a.jpg" alt="Dominic Jones">
+    <div class="dropdown-button user-dropdown" >
+    <a class="dropdown-link"  >
+      <img ng-src="{{loggedInUser.avatarImg}}" alt="{{loggedInUser.fullName}}"/>
       <i class="icon" data-icon="arrow-down-white"></i>
     </a>
     <div class="dropdown" >
       <div class="user-information">
-        <strong>Dominic Jones</strong>
+        <strong>{{loggedInUser.fullName}}</strong>
         LDL
       </div>
       <a  >My Profile</a>
@@ -93,7 +107,7 @@
 <a  class="send-feedback" target="_blank">Send Feedback</a>
 <ul class="flash">
 </ul>
-<div class=" timeline-view" ng-controller="TrelloController">
+<div class=" timeline-view" >
 <!--
 
  #####    ##   #   #        ####  #####  # #####
@@ -179,12 +193,21 @@ This is just "graph paper" - the actual elements are drawn in below
             </a>
             <div class="" ng-show="showProjectFilters">
                 <div class="filter-dropdown-list list-select">
-
-                  <ul class="filterList" ng-repeat="trellolist in trelloLists">
-                    <li>
-                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>
+                <h4>By Board</h4>
+                  <ul class="filterList" >
+                    <li ng-repeat="trellolist in trelloLists">
+                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="changeProjectList(trellolist)"/>
                     </li>
                   </ul>
+                  <!--
+                  <h4>By PM</h4>
+                  <ul class="filterList" >
+                    <li><span>unassigned</span><input type="checkbox" ng-model="trellolist.show" ng-click="changeProjectList(trellolist)"/></li>
+                    <li ng-repeat="trellolist in trelloLists">
+                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="changeProjectList(trellolist)"/>
+                    </li>
+                  </ul>
+                  -->
               </div>
             </div>
           </div>
@@ -205,17 +228,17 @@ This is just "graph paper" - the actual elements are drawn in below
           </div>
       <!--add "expanded-row" to user-row to flick switch-->
       <!--Show projects where project.listID = trellolists.id and trellolists.show == true-->
-      <!--<div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">-->
-      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
+      <div class="Row project-row {{project.colour}}" ng-class="{true:'expanded-row',false:''}[project.showAssignments]" ng-repeat="project in projects | validLabels | orderBy:'projectName'" ng-show="showItemsFromThisList(project.listID)">
       <div class="project-color"></div>
       <div class="content-parent-row">
 
         <div class="row-info" title="{{project.projectName}}" ng-click="project.showAssignments = !project.showAssignments;">
 
-          <h3><div class="trelloBoard" ng-show="project.trelloBoard && project.trelloBoard !='undefined'"><a href="https://trello.com/b/{{project.trelloBoard}}" target="_blank" title="Open This project's Trello board in a new tab"><img src="img/trelloicon.png"/></a></div><div class="new" ng-show="project.newToPipeline"></div>{{project.projectName}}</h3>
+          <h3><div class="trelloBoard" ng-show="project.trelloBoard && project.trelloBoard !='undefined'"><a href="https://trello.com/b/{{project.trelloBoard}}" target="_blank" title="Open This project's Trello board in a new tab"><img src="img/trelloicon.png"/></a></div><div class="new" title="Make me go away by adding a PM -> Click &quot;Edit&quot; below" ng-show="project.newToPipeline"></div>{{project.projectName}}</h3>
           <span>{{project.spiderRef}}</span>
           <i class="icon row-expand-icon" data-icon="arrow-down" ></i>
         </div><!--/row-info-->
+
 
         <!--totals row-->
         <div class="row-viewport">
@@ -371,11 +394,12 @@ This is just "graph paper" - the actual elements are drawn in below
               </span>
               <i class="icon row-expand-icon" data-icon="arrow-down"></i>
             </a>
+            <!--STAFF FILTER LIST-->
             <div class="" ng-show="showStaffFilters">
                 <div class="filter-dropdown-list list-select">
-                  <ul class="filterList" ng-repeat="team in teams">
-                    <li>
-                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="team.show != team.show"/>
+                  <ul class="filterList">
+                    <li ng-repeat="team in teams">
+                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="changeTeamList(team)"/>
                     </li>
                   </ul>
               </div>

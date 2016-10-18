@@ -52,6 +52,17 @@ app.get("/staffMembers",function(req,res){
 	});	
 });
 
+app.get("/tokenmember/:token",function(req,res){
+	var token = req.params.token;
+	var member = request({
+		uri:"https://trello.com/1/tokens/"+token+"/member?key="+trellokey+"&token="+token,
+		method:"GET"
+	},function(error,response,body){
+		var jsonbody = JSON.parse(body);
+		res.json(jsonbody);
+	})
+})
+
 //return projects from trello list
 app.get("/trelloProjects",function(req, res){
 	var trelloProjects = request({
@@ -160,4 +171,4 @@ app.post("/createTimeline",function(req, res){
 	})
 });
 
-app.listen(8080);
+app.listen(8081);

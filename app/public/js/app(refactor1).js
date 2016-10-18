@@ -1,7 +1,21 @@
 'use strict';
 
-var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap'])
-  .controller('TrelloController', function($scope,$rootScope, lodash, $http, UIFunctions){
+var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap','ngCookies','ngRoute','satellizer','trello-api-client'])
+
+    .config(function(TrelloClientProvider){
+    TrelloClientProvider.init({
+      key: 'c21f0af5b9c290981a03256a73f5c5fa',
+      appName: 'Pipeline',
+      tokenExpiration: 'never',
+      scope: ['read', 'write', 'account'],
+    });
+  })
+
+  .controller('TrelloController', function($scope,$rootScope, lodash, $window,$route, $cookieStore, $http, UIFunctions,TrelloClient){
+  $scope.popupOptions = {
+    type: 'popup'
+  }
+ 
 
 
 
@@ -28,6 +42,8 @@ Date.prototype.subtractDays = function(daysToSubtract){
   ####  ######  ####  #####  #    # ######  ####
 
 */
+$scope.splash=true;
+$scope.startscreen=true;
 
 var colours = ["orange","aqua","blue","purple","red","gray","green"];
 //var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
@@ -36,7 +52,7 @@ var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
 $scope.trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3",show:true},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU",show:true},{idx:1,id:"5645e743fc62fc449d543e31",name:"Scheduled Maintenance",show:true}]; //live
 $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-var trelloToken = "f58725c8a7fb8881459215565df47b4f60a85750dcd106944f7432c99a072a17";
+//var trelloToken = "4a26112c7d3ffb5fe1a0aed162d43d09bc4953067b04266b0a9711ef90d60e2c";
 
 $scope.teams = [
 {
@@ -71,7 +87,7 @@ $scope.teams = [
 },
 {
   name:'System',
-  members:['@pipelinebot','@DEATH','@lccwebrobot'],
+  members:['@pipelinebot','@DEATH','@lccwebrobot','@lccwebmaster'],
   show:false
 }];
 $rootScope.colours=[{name:'orange'},{name:'green'},{name:'aqua'},{name:'blue'},{name:'yellow'},{name:'salmon'},{name:'pink'},{name:'mint'},{name:'grass'},{name:'purple'},{name:'magenta'},{name:'red'},{name:'grey'},{name:'black'}];
@@ -99,13 +115,13 @@ $scope.allExpanded = true;
 */
 function getstaff(){
 //get Board Members
-$http.get("https://trello.com/1/boards/"+trelloBoard+"/members?key="+trelloKey+"&token="+trelloToken)
+$http.get("https://trello.com/1/boards/"+trelloBoard+"/members?key="+trelloKey+"&token="+$rootScope.trelloToken)
 .success(buildStaffObject);
 
 }
 
 $scope.showItemsFromThisList = function(listID){
-  //console.log ("showItemsFromThisList:"+listID);
+  ////console.log ("showItemsFromThisList:"+listID);
   for(var n = 0;n < $scope.trelloLists.length;n++){
     if($scope.trelloLists[n].id == listID && $scope.trelloLists[n].show == true){
       return true;
@@ -115,7 +131,7 @@ $scope.showItemsFromThisList = function(listID){
 }
 
 $scope.showMembersFromThisTeam = function(team){
-  //console.log ("showItemsFromThisList:"+listID);
+  ////console.log ("showItemsFromThisList:"+listID);
   for(var n = 0;n < $scope.teams.length;n++){
     if($scope.teams[n].name == team && $scope.teams[n].show == true){
       return true;
@@ -124,17 +140,46 @@ $scope.showMembersFromThisTeam = function(team){
   return false;
 }
 
+//Persist filters between visits/refreshes
+if($cookieStore.get('showBoards')){
+  var boardsToShow = JSON.parse(atob($cookieStore.get('showBoards')));
+  if(boardsToShow !== null && typeof boardsToShow === 'object'){
+    //console.log(boardsToShow);
+    for(var n=0;n<boardsToShow.length;n++){
+      for(var i=0;i< $scope.trelloLists.length;i++){
+        if($scope.trelloLists[n].name==boardsToShow[i].name){
+          $scope.trelloLists[n].show = boardsToShow[i].show;
+        }
+      }
+    }
+  }
+}
+
+if($cookieStore.get('showTeams')){
+  var teamsToShow = JSON.parse(atob($cookieStore.get('showTeams')));
+  if(teamsToShow !== null && typeof teamsToShow === 'object'){
+    //console.log(teamsToShow);
+    for(var n=0;n<teamsToShow.length;n++){
+      for(var i=0;i< $scope.teams.length;i++){
+        if($scope.teams[n].name==teamsToShow[i].name){
+          $scope.teams[n].show = teamsToShow[i].show;
+        }
+      }
+    }
+  }
+}
+
 var getCards =function getCards(arrList){
 //get cards
   for(var n = 0;n < arrList.length;n++){
-      $http.get("https://trello.com/1/lists/"+arrList[n].id+"/cards?key="+trelloKey+"&token="+trelloToken)
+      $http.get("https://trello.com/1/lists/"+arrList[n].id+"/cards?key="+trelloKey+"&token="+$rootScope.trelloToken)
   .success(buildProjectsObject);
   }
 }
 
 function getLeaveObjects(){
 //get new leave objects
-  $http.get("https://trello.com/1/cards/"+$rootScope.leaveCardID+"/actions?key="+trelloKey+"&token="+trelloToken)
+  $http.get("https://trello.com/1/cards/"+$rootScope.leaveCardID+"/actions?key="+trelloKey+"&token="+$rootScope.trelloToken)
   .success(parseLeaveObject);
 }
 
@@ -356,6 +401,19 @@ function workingDaysBetweenDates(startDate, endDate) {
     $scope.mousepos={row:index,col:(Math.ceil(event.clientX/60)*60)-360};
   }
 
+ $scope.changeProjectList= function(trelloList){
+    trelloList.show != trelloList.show;
+    $cookieStore.put('showBoards',btoa(JSON.stringify($scope.trelloLists)));
+    var cookieValue=(JSON.parse(atob($cookieStore.get('showBoards'))));
+    console.log(cookieValue);
+  };
+
+    $scope.changeTeamList= function(team){
+    team.show != team.show;
+    $cookieStore.put('showTeams',btoa(JSON.stringify($scope.teams)));
+    var cookieValue=(JSON.parse(atob($cookieStore.get('showTeams'))));
+    console.log(cookieValue);
+  };
 
 /*
 
@@ -373,35 +431,64 @@ function dateOrdinal(inDate){
   return dop;
 }
 
-function parseProjectTimeline(tl,projectName){
+function parseProjectTimeline(tl,projectName,prjStartDate){
   //work out the calculated start date and end date here.
   var timeline = {assignments:[],milestones:[]};
-  var csd=0;
-  var ced=0;
+  var csd=0, asd=0;
+  var ced=0, aed=0;
   for(var n=0;n<tl.checkItems.length;n++){
     //don't bother with ticked off items
     if(tl.checkItems[n].state == 'incomplete'){
-      if(tl.checkItems[n].name.substring(0,1)=="@"){
+      if(tl.checkItems[n].name.substring(0,2)!="MS"){
         var assignment=tl.checkItems[n].name.split('|');
         var hours = 7;
         if(assignment[3]){
           hours=assignment[3];
         }
         var staffMember = assignment[0].replace(' ','');//remove spaces from hand-cranked assignments!
-        var dates=assignment[1].split('-');
-        if(csd==0||dateOrdinal(dates[0])<dateOrdinal(csd)){
-          csd = dates[0];
+        //check for date styles...
+        //------------------------
+        //Assignments can either have manual date ranges in the form dd/MM/yyyy-dd/MM/yyyy
+        //or can be based upon the start date in the format: +n:d where n=days after start date and d=duration (in working days)
+        //
+        ////console.log(typeof assignment[1]);
+        if(assignment[1].substr(0,1) == "+"){
+          var extractDateParts = assignment[1].substr(1,assignment[1].length);
+          var dateCalcParts = assignment[1].split(":");
+          var startDateNumberPart = dateCalcParts[0].substr(1,dateCalcParts[0].length);
+          var sdnpAsInt=parseInt(startDateNumberPart);
+          var atsd = sdnpAsInt;
+          asd = UIFunctions.addWorkingDaysToDate(prjStartDate,atsd);
+          aed = UIFunctions.addWorkingDaysToDate(asd,parseInt(dateCalcParts[1]));
+          //console.log(assignment[2]+" :"+asd+" -> "+aed);
         }
-        if(ced==0||dateOrdinal(dates[1])>dateOrdinal(ced)){
-          ced = dates[1];
+        else
+        {
+          var dates=assignment[1].split('-');
+          asd = dates[0];
+          aed = dates[1];
         }
-        var thisAssignment = new UIFunctions.Assignment(timeline.id,projectName,staffMember,dates[0],dates[1],assignment[2],hours);
+        if(csd==0||dateOrdinal(asd)<dateOrdinal(csd)){
+          csd = asd;
+        }
+        if(ced==0||dateOrdinal(aed)>dateOrdinal(ced)){
+          ced = aed;
+        }
+        var thisAssignment = new UIFunctions.Assignment(timeline.id,projectName,staffMember,asd,aed,assignment[2],hours);
         thisAssignment.assignmentID=tl.checkItems[n].id;
         timeline.assignments.push(thisAssignment);
       }
       else if(tl.checkItems[n].name.substring(0,2)=="MS"){
         var milestone = tl.checkItems[n].name.split('|');
-        var thisMilestone = new UIFunctions.Milestone(milestone[1],milestone[2]);
+        var datePart;
+        if(milestone[1].substring(0,1)=="+"){
+          var extractNumber = parseInt(milestone[1].substring(1,milestone[1].length));
+          datePart = UIFunctions.addWorkingDaysToDate(prjStartDate,extractNumber);
+        }
+        else {
+          datePart = milestone[1];
+        }
+        var thisMilestone = new UIFunctions.Milestone(datePart,milestone[2]);
         timeline.milestones.push(thisMilestone);
       }
     }
@@ -414,10 +501,17 @@ function parseProjectTimeline(tl,projectName){
 var parseCard = function(objCard){
   var description=splitDesc(objCard.desc);
   var newToPipeline = true;
+  var prjStartDate = UIFunctions.shortUKDate($rootScope.today);
   if(description){
       newToPipeline = false;
+      if(description.startDate){
+      if(description.startDate!="undefined"){
+        prjStartDate = description.startDate;
+      }
+    }
   }
   var projectName = removeSpiderRefs(objCard.name);
+  ////console.log(projectName+":"+prjStartDate);
   var cardid=objCard.id;
   //build labels array
   var labels = [];
@@ -434,16 +528,16 @@ var parseCard = function(objCard){
   if(objCard.idChecklists.length >0){
     //iterate checklists on card
     for(var i=0;i<objCard.idChecklists.length;i++){
-      $http.get("https://trello.com/1/checklists/"+objCard.idChecklists[i]+"?key="+trelloKey+"&token="+trelloToken)
+      $http.get("https://trello.com/1/checklists/"+objCard.idChecklists[i]+"?key="+trelloKey+"&token="+$rootScope.trelloToken)
       .success(function lookForTimeline(objCheckList){
         angular.forEach(objCheckList, function extractTimeline(v,k){
           if(k=="name" && v.toLowerCase()=="project timeline"){
             $rootScope.projects[cardIDX-1].timelineID = objCheckList.id;
-            var timeline = parseProjectTimeline(objCheckList,projectName);
+            var timeline = parseProjectTimeline(objCheckList,projectName,prjStartDate);
             //add array of assignments to project
             $rootScope.projects[cardIDX-1].assignments=timeline.assignments;
             $rootScope.projects[cardIDX-1].milestones=timeline.milestones;
-            //console.log("Project:"+projectName);
+            ////console.log("Project:"+projectName);
             $rootScope.projects[cardIDX-1].calcStartDate=timeline.csd;
             $rootScope.projects[cardIDX-1].calcEndDate=timeline.ced;
             if(timeline.csd){
@@ -464,23 +558,19 @@ var parseCard = function(objCard){
 }
 
 function parseLeaveObject(response){
-  //console.log("LEAVE:");
-  //console.log(response);
-  //console.log("STAFF:");
-  //console.log($rootScope.staff)
   angular.forEach(response, function buildLeaveObject(v,k){
     if(v.type=='commentCard'){
-      //console.log(v.data.text);
+      ////console.log(v.data.text);
       var smName = v.data.text.split('|');
-      //console.log(smName[0]);
+      ////console.log(smName[0]);
       for (var n=0;n < $rootScope.staff.length; n++){
-        //console.log($rootScope.staff[n].fullName);
+        ////console.log($rootScope.staff[n].fullName);
         if($rootScope.staff[n].fullName == smName[0]){
           smName[0]=$rootScope.staff[n].userName;
         }
       }
       var leaveObject = smName.join('|');
-      //console.log(leaveObject);
+      ////console.log(leaveObject);
     }
   })
 }
@@ -502,7 +592,7 @@ $scope.projectsView=true;
 var buildStaffObject = function(response){
   //iterate response, create new staffmember object for each, pump in contents.
   response.forEach(function(person){
-    $http.get("https://trello.com/1/members/"+person.id+"/avatarhash?key="+trelloKey+"&token="+trelloToken)
+    $http.get("https://trello.com/1/members/"+person.id+"/avatarhash?key="+trelloKey+"&token="+$rootScope.trelloToken)
     .success(function(response){
         if(response._value){
           var avatarImg = "https://trello-avatars.s3.amazonaws.com/"+response._value+"/50.png";
@@ -517,7 +607,7 @@ var buildStaffObject = function(response){
           $rootScope.staff.push(sm);
     });
   });
-  getCards($scope.trelloLists);
+getCards($scope.trelloLists);
 }
 
 function assignToStaff(assignment){
@@ -529,6 +619,38 @@ function assignToStaff(assignment){
     }
   });
 }
+$scope.go = function(member){
+
+  $scope.loggedInUser = member;
+    if(member.avatarHash.length>0){
+      var avatarImg = "https://trello-avatars.s3.amazonaws.com/"+member.avatarHash+"/50.png";
+    }
+    else
+    {
+      var avatarImg = "/img/1x1transparent.png";
+    }
+    $scope.loggedInUser.avatarImg = avatarImg; 
+  getLeaveObjects();
+  getstaff();
+  $scope.renderDayGrid($rootScope.today);
+  console.log($rootScope);
+  console.log($scope);
+}
+
+$scope.login = function(){
+  $scope.splash = false;
+  TrelloClient.authenticate();
+}
+
+$scope.firstRun = function(){
+  $scope.startscreen=false;
+  $rootScope.trelloToken=localStorage.getItem('trello_token');
+  $http.get("https://trello.com/1/tokens/"+$rootScope.trelloToken+"/member?key="+trelloKey+"&token="+$rootScope.trelloToken)
+.success($scope.go);
+
+
+}
+
 
 
 /*
@@ -543,12 +665,20 @@ function assignToStaff(assignment){
 
 */
 
-//parse out new leave items (these come in as comments to the leave ticket as thats all Zapier can do)
-//getLeaveObjects();
-$scope.renderDayGrid($rootScope.today);
-getstaff();
-console.log($rootScope);
-console.log($scope);
+//Have I got a token in local storage?
+if(localStorage.getItem('trello_token')){
+  console.log("yes");
+  $scope.splash = false;
+  $scope.startscreen=false;
+  $rootScope.trelloToken=localStorage.getItem('trello_token');
+  $http.get("https://trello.com/1/tokens/"+$rootScope.trelloToken+"/member?key="+trelloKey+"&token="+$rootScope.trelloToken)
+.success($scope.go);
+  }else{
+  //This works, but requires a page refresh.
+  //TrelloClient.authenticate();
+}
+
+
 });
 
 pipeline.filter('validLabels',function($rootScope){
@@ -557,9 +687,9 @@ pipeline.filter('validLabels',function($rootScope){
     for (var i = 0; i < items.length; i++) {
       var pushme = true
       var item = items[i];
-      //console.log('Project:'+item.projectName)
+      ////console.log('Project:'+item.projectName)
       for(var n=0;n < item.labels.length; n++){
-        //console.log('labels: '+item.labels[n].name);
+        ////console.log('labels: '+item.labels[n].name);
         for(var p=0;p<$rootScope.ignoreLabels.length;p++){
           if(item.labels[n].name == $rootScope.ignoreLabels[p]){
             pushme = false;
