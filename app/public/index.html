@@ -21,11 +21,15 @@
     <script src="js/ng-lodash.min.js"></script>
     <script src="js/ui-bootstrap.min.js"></script>
     <script src="js/ui-bootstrap-tpls.min.js"></script>
+<<<<<<< HEAD
     <script src="js/angular-cookies.js"></script>
     <script src="js/angular-route.js"></script>
     <script src="js/satellizer.js"></script>
     <script src="js/angular-trello-api-client.js"></script>
   <!--My modules-->   
+=======
+    <script src="js/ng-lodash.min.js"></script>
+>>>>>>> origin/master
     <script src="js/app(refactor1).js"></script>
     <script src="js/rootscope_functions.js"></script>
     <script src="js/assignProjectCtrl.js"></script>
@@ -34,6 +38,7 @@
     <script src="js/editAssignmentCtrl.js"></script>
     <script src="js/editProjectCtrl.js"></script>
     <script src="js/addMilestoneCtrl.js"></script>
+    <script src="js/angular-cookies.min.js"></script>
 </head>
 <body style="cursor: auto;" >
   <main ng-controller="TrelloController">
@@ -98,7 +103,7 @@
         <strong>{{loggedInUser.fullName}}</strong>
         LDL
       </div>
-      <a  >My Profile</a>
+      <a >My Profile</a>
       <a href="javascript:void(0)" >Sign Out</a>
     </div>
   </div>
@@ -193,10 +198,18 @@ This is just "graph paper" - the actual elements are drawn in below
             </a>
             <div class="" ng-show="showProjectFilters">
                 <div class="filter-dropdown-list list-select">
+<<<<<<< HEAD
                 <h4>By Board</h4>
                   <ul class="filterList" >
                     <li ng-repeat="trellolist in trelloLists">
                       <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="changeProjectList(trellolist)"/>
+=======
+
+                  <ul class="filterList" ng-repeat="trellolist in trelloLists">
+                    <li>
+                      <!--<span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="trellolist.show != trellolist.show"/>-->
+                      <span>{{trellolist.name}}</span><input type="checkbox" ng-model="trellolist.show" ng-click="changelist(trellolist)"/>
+>>>>>>> origin/master
                     </li>
                   </ul>
                   <!--
@@ -397,9 +410,15 @@ This is just "graph paper" - the actual elements are drawn in below
             <!--STAFF FILTER LIST-->
             <div class="" ng-show="showStaffFilters">
                 <div class="filter-dropdown-list list-select">
+<<<<<<< HEAD
                   <ul class="filterList">
                     <li ng-repeat="team in teams">
                       <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="changeTeamList(team)"/>
+=======
+                  <ul class="filterList" ng-repeat="team in teams">
+                    <li>
+                      <span>{{team.name}}</span><input type="checkbox" ng-model="team.show" ng-click="team.show != team.show;"/>
+>>>>>>> origin/master
                     </li>
                   </ul>
               </div>

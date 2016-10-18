@@ -253,8 +253,13 @@ var parsePrjAssignments = function(){
 }
 
 var postAssignmentToTrello = function(project,shorthand){
+<<<<<<< HEAD
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
   var trelloToken = $rootScope.trelloToken;
+=======
+  var trelloKey = "YOUR TRELLO KEY";
+  var trelloToken = "YOUR TRELLO TOKEN";
+>>>>>>> origin/master
 
   if(project.timelineID == 0){
       $http.post('/createTimeline', {projectid:project.id,name: shorthand, key:trelloKey,token:trelloToken})
@@ -288,8 +293,13 @@ var postAssignmentToTrello = function(project,shorthand){
 }
 
 var updateAssignmentInTrello = function(project,assignment,shorthand){
+<<<<<<< HEAD
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
   var trelloToken = $rootScope.trelloToken;
+=======
+  var trelloKey = "YOUR TRELLO KEY";
+  var trelloToken = "YOUR TRELLO TOKEN";
+>>>>>>> origin/master
   $http.put('/updateAssignment', {name: shorthand,projectid:project.id,timeline:project.timelineID,assignmentID:assignment.assignmentID,key:trelloKey,token:trelloToken})
     .then(function(response){
 
@@ -299,8 +309,13 @@ var updateAssignmentInTrello = function(project,assignment,shorthand){
 }
 
 var updateTrelloProject = function(project){
+<<<<<<< HEAD
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
   var trelloToken = $rootScope.trelloToken;
+=======
+  var trelloKey = "YOUR TRELLO KEY";
+  var trelloToken = "YOUR TRELLO TOKEN";
+>>>>>>> origin/master
   $http.put('/updateProject', {id: project.id,name: project.projectName,desc:project.notes,due:project.deadline,key:trelloKey,token:trelloToken})
     .then(function(response){
 

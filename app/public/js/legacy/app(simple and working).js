@@ -13,8 +13,8 @@ $scope.renderDayGrid($scope.today);
     function fetch(){
       //fetch cards from list
       $scope.projects=[];
-      var trellokey = "c21f0af5b9c290981a03256a73f5c5fa";
-      var trellotoken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
+      var trellokey = "YOUR TRELLO KEY";
+      var trellotoken = "YOUR TRELLO TOKEN";
       $http.get("https://trello.com/1/lists/55916f3624405fba862eede7/cards?key="+trellokey+"&token="+trellotoken)
        .success(function parseRawList(response){
         $scope.rawList = response; 

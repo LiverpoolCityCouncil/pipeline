@@ -99,7 +99,15 @@ $scope.allExpanded = true;
 */
 function getstaff(){
 //get Board Members
+<<<<<<< HEAD:app/public/js/app(refactor1-working-pre-auth).js
 $http.get("https://trello.com/1/boards/"+trelloBoard+"/members?key="+trelloKey+"&token="+trelloToken)
+=======
+console.log("program step 7: Call trello and get board members - on success, pass to the 'BuildStaffObject' function");
+console.log($rootScope.config);
+var defaultBoard = lodash.find($rootScope.config.trelloBoards,{default:true});
+
+$http.get("https://trello.com/1/boards/"+defaultBoard.boardId+"/members?key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+>>>>>>> origin/master:app/public/js/app(refactor2).js
 .success(buildStaffObject);
 
 }
@@ -385,6 +393,7 @@ function workingDaysBetweenDates(startDate, endDate) {
     $scope.mousepos={row:index,col:(Math.ceil(event.clientX/60)*60)-360};
   }
 
+<<<<<<< HEAD:app/public/js/app(refactor1-working-pre-auth).js
  $scope.changeProjectList= function(trelloList){
     trelloList.show != trelloList.show;
     $cookieStore.put('showBoards',btoa(JSON.stringify($scope.trelloLists)));
@@ -399,6 +408,8 @@ function workingDaysBetweenDates(startDate, endDate) {
     console.log(cookieValue);
   };
 
+=======
+>>>>>>> origin/master:app/public/js/app(refactor2).js
 /*
 
  #####    ##   #####   ####  ###### #####   ####
@@ -621,11 +632,129 @@ function assignToStaff(assignment){
 
 
 
+<<<<<<< HEAD:app/public/js/app(refactor1-working-pre-auth).js
 
 
 
 
 
+=======
+console.log("program step 1: Defining main functions");
+
+var mainFunctionLoop = function(config){
+//  console.log("program step 4: Into Main Function Loop");
+//  console.log("rootScope should now have a config element");
+//  console.log("rootScope:");
+//  console.log($rootScope);
+  //getLeaveObjects();-->This doesn't DO anything :-)
+//  console.log("program step 5: render day grid");
+  $scope.renderDayGrid($rootScope.today);
+//  console.log("program step 6: get staff");
+  getstaff();
+  //console.log($rootScope);
+  //console.log($scope);
+}
+
+var getTrelloConfig = function(configBoard,mainFunctionLoop){
+  console.log("program step 2: in GetTrelloConfig function");
+$rootScope.config={};
+  $rootScope.config.lists=[];
+  $rootScope.config.configBoard = configBoard;
+  $rootScope.config.trelloKey = "YOUR TRELLO KEY";
+  $rootScope.config.trelloToken = "YOUR TRELLO TOKEN";
+  //Let's go get some config...
+  $http.get("https://trello.com/1/boards/"+configBoard+"/lists?cards=none&card_fields=all&filter=open&fields=all&key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+  .success(function(response){
+    $rootScope.config.lists.trelloBoards = lodash.find(response,{name:"Project Boards"});
+    $rootScope.config.lists.teams = lodash.find(response,{name:"Teams"});
+    $rootScope.config.lists.CardConfigs = lodash.find(response,{name:"Card configs"});
+    $rootScope.config.lists.ignoreLabels = lodash.find(response,{name:"Labels to ignore"});
+    $rootScope.config.lists.ContentLists = lodash.find(response,{name:"content lists"});
+    $rootScope.config.trelloBoards=[];
+
+    //Get the boards & lists
+    $http.get("https://trello.com/1/lists/"+$rootScope.config.lists.trelloBoards.id+"/cards?key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+    .success(function(boards){
+      for(var n=0;n<boards.length;n++){
+        var cardDeets = boards[n].name.split(' [');
+        var boardName=cardDeets[0];
+        var boardID=(cardDeets[1]).substr(0,cardDeets[1].length-1);
+        $rootScope.config.trelloBoards[n]={name:boardName,trelloLists:[],boardID:boardID,checklistID:boards[n].idChecklists[0]};
+        if(lodash.find(boards[n].labels,{name:"is Default Board"})){
+          $rootScope.config.trelloBoards[n].default=true;
+        }
+        else{
+          $rootScope.config.trelloBoards[n].default=false;
+        }
+        $scope.n = n;
+        $http.get("https://trello.com/1/checklists/"+$rootScope.config.trelloBoards[n].checklistID+"?key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+        .success(function(checklist){
+           for(var i=0;i<checklist.checkItems.length;i++){
+            var listDeets = checklist.checkItems[i].name.split(' [');
+            var listName=listDeets[0];
+            var listID=(listDeets[1]).substr(0,listDeets[1].length-1);
+            $rootScope.config.trelloBoards[$scope.n].trelloLists.push({idx:i,id:listID,name:listName});
+           }
+        });
+      }
+    });
+
+    //build teams
+    $rootScope.config.teams=[];
+    $http.get("https://trello.com/1/lists/"+$rootScope.config.lists.teams.id+"/cards?key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+    .success(function(teams){
+      for(var team=0;team<teams.length;team++){
+        $rootScope.config.teams[team] = {id:teams[team].id,name:teams[team].name,members:[]};
+        if(lodash.find(teams[team].labels,{name:"hide by default"})){
+          $rootScope.config.teams[team].show=false;
+        }
+        else {
+          $rootScope.config.teams[team].show=true;
+        }
+        $http.get("https://trello.com/1/cards/"+teams[team].id+"/checklists?cards=none&card_fields=all&checkItems=all&checkItem_fields=name%2C%20nameData%2C%20pos%20and%20state&filter=all&fields=all&key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+        .success(function(checklists,team){
+          for(var checklist=0;checklist<checklists.length;checklist++){
+            if(checklists[checklist].name=="Members"){
+              $http.get("https://trello.com/1/checklists/"+checklists[checklist].id+"?key="+$rootScope.config.trelloKey+"&token="+$rootScope.config.trelloToken)
+              .success(function(checkList,team){
+                for(var checkitem=0;checkitem<checkList.checkItems.length;checkitem++){
+                  var myTeam = lodash.find($rootScope.config.teams,{id:checkList.idCard})
+                  myTeam.members.push(checkList.checkItems[checkitem].name);
+                }
+              });
+            }
+          }
+        });
+      }
+    });
+  });
+
+  //Board & lists come from cards in the "Project Boards" list.
+  //The Card contains the board Name and [ID] in the title, with a
+  //checklist of lists(each containing List name and [ID])
+
+  //config.colours = ["orange","aqua","blue","purple","red","gray","green"];
+  //var trelloBoard="jZalCdKy"; //Pipeline Development Board (dev)
+  //config.trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
+  //var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3",show:true},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU",show:true}]; //dev
+  //config.trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3",show:true},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU",show:true},{idx:1,id:"5645e743fc62fc449d543e31",name:"Scheduled Maintenance",show:true}]; //live
+  //config.ignoreLabels=["on hold","Awaiting sign off"];
+
+  // config.colours=[{name:'orange'},{name:'green'},{name:'aqua'},{name:'blue'},{name:'yellow'},{name:'salmon'},{name:'pink'},{name:'mint'},{name:'grass'},{name:'purple'},{name:'magenta'},{name:'red'},{name:'grey'},{name:'black'}];
+  // //config.leaveCardID='8GPkKF0V';//dev
+  // config.leaveCardID='J4pZMxUW';//live
+  $scope.teams = $rootScope.config.teams;
+  $scope.trelloLists = $rootScope.config.trelloLists;
+  $rootScope.projects=[];
+  $rootScope.staff=[];
+
+  console.log("program step 3: Config defined");
+
+  mainFunctionLoop();
+}
+var configBoard = "QUYFKlKu"
+getTrelloConfig(configBoard,mainFunctionLoop);
+>>>>>>> origin/master:app/public/js/app(refactor2).js
 
 
 
