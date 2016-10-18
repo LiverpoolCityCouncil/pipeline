@@ -1,6 +1,5 @@
 'use strict';
 
-<<<<<<< HEAD
 var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap','ngCookies','ngRoute','satellizer','trello-api-client'])
 
     .config(function(TrelloClientProvider){
@@ -18,11 +17,7 @@ var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap','ngCookies','
   }
  
 
-=======
-var pipeline=angular.module('pipeline', ['ngLodash','ui.bootstrap','ngCookies']);
->>>>>>> origin/master
 
-pipeline.controller('TrelloController',function($rootScope,$scope,lodash, $http, UIFunctions){
 
 Date.prototype.getWeek = function() {
   var onejan = new Date(this.getFullYear(),0,1);
@@ -56,13 +51,8 @@ var trelloBoard="544e2d207ad565ce3a4cc4f4"; //Spider Trello (live)
 //var trelloLists =[{idx:0,id:"5698e74d97f46633fb16fae1",name:"stage 3",show:true},{idx:1,id:"5698e7959464b05bb6595a8c",name:"BAU",show:true}]; //dev
 $scope.trelloLists =[{idx:0,id:"544e2d3763f8d35dd44bb153",name:"stage 3",show:true},{idx:1,id:"547315b58b585dca845fc24b",name:"BAU",show:true},{idx:1,id:"5645e743fc62fc449d543e31",name:"Scheduled Maintenance",show:true}]; //live
 $rootScope.ignoreLabels=["on hold","Awaiting sign off"];
-<<<<<<< HEAD
 var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 //var trelloToken = "4a26112c7d3ffb5fe1a0aed162d43d09bc4953067b04266b0a9711ef90d60e2c";
-=======
-var trelloKey = "YOUR TRELLO KEY";
-var trelloToken = "YOUR TRELLO TOKEN";
->>>>>>> origin/master
 
 $scope.teams = [
 {
@@ -411,7 +401,6 @@ function workingDaysBetweenDates(startDate, endDate) {
     $scope.mousepos={row:index,col:(Math.ceil(event.clientX/60)*60)-360};
   }
 
-<<<<<<< HEAD
  $scope.changeProjectList= function(trelloList){
     trelloList.show != trelloList.show;
     $cookieStore.put('showBoards',btoa(JSON.stringify($scope.trelloLists)));
@@ -425,12 +414,6 @@ function workingDaysBetweenDates(startDate, endDate) {
     var cookieValue=(JSON.parse(atob($cookieStore.get('showTeams'))));
     console.log(cookieValue);
   };
-=======
-  $scope.changelist= function(trelloList){
-    trelloList.show != trelloList.show;
-    $cookies.put('this','that');
-  }
->>>>>>> origin/master
 
 /*
 
@@ -468,11 +451,7 @@ function parseProjectTimeline(tl,projectName,prjStartDate){
         //Assignments can either have manual date ranges in the form dd/MM/yyyy-dd/MM/yyyy
         //or can be based upon the start date in the format: +n:d where n=days after start date and d=duration (in working days)
         //
-<<<<<<< HEAD
         ////console.log(typeof assignment[1]);
-=======
-        //console.log(typeof assignment[1]);
->>>>>>> origin/master
         if(assignment[1].substr(0,1) == "+"){
           var extractDateParts = assignment[1].substr(1,assignment[1].length);
           var dateCalcParts = assignment[1].split(":");
@@ -488,7 +467,6 @@ function parseProjectTimeline(tl,projectName,prjStartDate){
           var dates=assignment[1].split('-');
           asd = dates[0];
           aed = dates[1];
-<<<<<<< HEAD
         }
         if(csd==0||dateOrdinal(asd)<dateOrdinal(csd)){
           csd = asd;
@@ -496,15 +474,6 @@ function parseProjectTimeline(tl,projectName,prjStartDate){
         if(ced==0||dateOrdinal(aed)>dateOrdinal(ced)){
           ced = aed;
         }
-=======
-        }
-        if(csd==0||dateOrdinal(asd)<dateOrdinal(csd)){
-          csd = asd;
-        }
-        if(ced==0||dateOrdinal(aed)>dateOrdinal(ced)){
-          ced = aed;
-        }
->>>>>>> origin/master
         var thisAssignment = new UIFunctions.Assignment(timeline.id,projectName,staffMember,asd,aed,assignment[2],hours);
         thisAssignment.assignmentID=tl.checkItems[n].id;
         timeline.assignments.push(thisAssignment);
@@ -542,11 +511,7 @@ var parseCard = function(objCard){
     }
   }
   var projectName = removeSpiderRefs(objCard.name);
-<<<<<<< HEAD
   ////console.log(projectName+":"+prjStartDate);
-=======
-  //console.log(projectName+":"+prjStartDate);
->>>>>>> origin/master
   var cardid=objCard.id;
   //build labels array
   var labels = [];
@@ -700,7 +665,6 @@ $scope.firstRun = function(){
 
 */
 
-<<<<<<< HEAD
 //Have I got a token in local storage?
 if(localStorage.getItem('trello_token')){
   console.log("yes");
@@ -715,21 +679,7 @@ if(localStorage.getItem('trello_token')){
 }
 
 
-=======
-
-//parse out new leave items (these come in as comments to the leave ticket as thats all Zapier can do)
-getLeaveObjects();
-
-
-$scope.renderDayGrid($rootScope.today);
-getstaff();
-console.log($rootScope);
-console.log($scope);
->>>>>>> origin/master
 });
-
-
-
 
 pipeline.filter('validLabels',function($rootScope){
   return function (items) {
