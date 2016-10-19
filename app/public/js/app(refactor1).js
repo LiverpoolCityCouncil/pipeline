@@ -654,6 +654,7 @@ $scope.signout = function(){
   $scope.splash = true;
   $scope.startscreen=true;
   $scope.acctDropdown=false;
+  $window.location.reload();
 }
 
 /*
