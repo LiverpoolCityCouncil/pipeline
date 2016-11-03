@@ -408,12 +408,32 @@ function workingDaysBetweenDates(startDate, endDate) {
     console.log(cookieValue);
   };
 
-    $scope.changeTeamList= function(team){
+  $scope.changeTeamList= function(team){
     team.show != team.show;
     $cookieStore.put('showTeams',btoa(JSON.stringify($scope.teams)));
     var cookieValue=(JSON.parse(atob($cookieStore.get('showTeams'))));
     console.log(cookieValue);
   };
+
+  $scope.login = function(){
+  $scope.splash = false;
+  TrelloClient.authenticate();
+}
+
+$scope.firstRun = function(){
+  $scope.startscreen=false;
+  $rootScope.trelloToken=localStorage.getItem('trello_token');
+  $http.get("https://trello.com/1/tokens/"+$rootScope.trelloToken+"/member?key="+trelloKey+"&token="+$rootScope.trelloToken)
+.success($scope.go);
+}
+
+$scope.signout = function(){
+  localStorage.removeItem('trello_token');
+  $scope.splash = true;
+  $scope.startscreen=true;
+  $scope.acctDropdown=false;
+  $window.location.reload();
+}
 
 /*
 
@@ -560,7 +580,7 @@ var parseCard = function(objCard){
 function parseLeaveObject(response){
   angular.forEach(response, function buildLeaveObject(v,k){
     if(v.type=='commentCard'){
-      ////console.log(v.data.text);
+      console.log(v.data.text);
       var smName = v.data.text.split('|');
       ////console.log(smName[0]);
       for (var n=0;n < $rootScope.staff.length; n++){
@@ -630,32 +650,14 @@ $scope.go = function(member){
       var avatarImg = "/img/1x1transparent.png";
     }
     $scope.loggedInUser.avatarImg = avatarImg; 
-  getLeaveObjects();
+  //getLeaveObjects();
   getstaff();
   $scope.renderDayGrid($rootScope.today);
   console.log($rootScope);
   console.log($scope);
 }
 
-$scope.login = function(){
-  $scope.splash = false;
-  TrelloClient.authenticate();
-}
 
-$scope.firstRun = function(){
-  $scope.startscreen=false;
-  $rootScope.trelloToken=localStorage.getItem('trello_token');
-  $http.get("https://trello.com/1/tokens/"+$rootScope.trelloToken+"/member?key="+trelloKey+"&token="+$rootScope.trelloToken)
-.success($scope.go);
-}
-
-$scope.signout = function(){
-  localStorage.removeItem('trello_token');
-  $scope.splash = true;
-  $scope.startscreen=true;
-  $scope.acctDropdown=false;
-  $window.location.reload();
-}
 
 /*
 
