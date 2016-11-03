@@ -1,5 +1,5 @@
 angular.module('pipeline')
-.factory('UIFunctions',function UIFunctionsFactory($rootScope,$http){
+.factory('UIFunctions',function UIFunctionsFactory($rootScope,$http,$filter){
 
 /*
 
@@ -59,6 +59,11 @@ var CapacityItem = function (idx,hours,cssClass){
   this.idx = idx;
   this.hours = 0;
   this.cssClass='';
+}
+
+var shortUKDate = function(dateToParse){
+  var strDate = $filter('date')(dateToParse, 'dd/MM/yyyy');
+  return strDate;
 }
 
 var Milestone = function(date,name){
@@ -161,6 +166,29 @@ var workingDaysBetweenDates =function(startDate, endDate) {
 
     return days;
 }
+
+var getDateFromUKFormatString = function(ukDate){
+  var splitme=ukDate.split("/");
+  var dateToReturn = new Date(parseInt(splitme[2]),parseInt(splitme[1])-1,parseInt(splitme[0]));
+  return dateToReturn;
+}
+
+function addWorkingDaysToDate(startDate,days) { //myDate = starting date, days = no. working days to add.
+    var myDate=getDateFromUKFormatString(startDate);
+    var temp_date = new Date();
+    var i = 0;
+    var days_to_add = 0;
+    while (i < (days)){
+      temp_date = new Date(myDate.getTime() + (days_to_add*24*60*60*1000));
+				//0 = Sunday, 6 = Saturday, if the date not equals a weekend day then increase by 1
+				if ((temp_date.getDay() != 0) && (temp_date.getDay() != 6)){
+					i+=1;
+				}
+				days_to_add += 1;
+			}
+		return shortUKDate(new Date(myDate.getTime() + days_to_add*24*60*60*1000));
+}
+
 var barCoords = function(start,end){
   var sdArray = start.split('/');
   var startDate = new Date(sdArray[2],sdArray[1]-1,sdArray[0],0,0,1,1);
@@ -226,7 +254,7 @@ var parsePrjAssignments = function(){
 
 var postAssignmentToTrello = function(project,shorthand){
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
+  var trelloToken = $rootScope.trelloToken;
 
   if(project.timelineID == 0){
       $http.post('/createTimeline', {projectid:project.id,name: shorthand, key:trelloKey,token:trelloToken})
@@ -261,7 +289,7 @@ var postAssignmentToTrello = function(project,shorthand){
 
 var updateAssignmentInTrello = function(project,assignment,shorthand){
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
+  var trelloToken = $rootScope.trelloToken;
   $http.put('/updateAssignment', {name: shorthand,projectid:project.id,timeline:project.timelineID,assignmentID:assignment.assignmentID,key:trelloKey,token:trelloToken})
     .then(function(response){
 
@@ -272,7 +300,7 @@ var updateAssignmentInTrello = function(project,assignment,shorthand){
 
 var updateTrelloProject = function(project){
   var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
-  var trelloToken = "ce497520ad564967346c36529eff2e65ab7b604f0dba95a3da8e4641c014ae60";
+  var trelloToken = $rootScope.trelloToken;
   $http.put('/updateProject', {id: project.id,name: project.projectName,desc:project.notes,due:project.deadline,key:trelloKey,token:trelloToken})
     .then(function(response){
 
@@ -281,31 +309,11 @@ var updateTrelloProject = function(project){
     })
 }
 
-var getNamedChecklistFromCard = function(objCard,checklistName,key,token){
-  //gets all the items from a named Checklist
-  //returns an array of objects
-
-  if(objCard.idChecklists.length >0){
-    //iterate checklists on card
-    for(var i=0;i<objCard.idChecklists.length;i++){
-      $http.get("https://trello.com/1/checklists/"+objCard.idChecklists[i]+"?key="+key+"&token="+token)
-      .then(function lookForTimeline(objCheckList){
-        angular.forEach(objCheckList, function extractMatchingChecklist(v,k){
-          if(k=="name" && v.toLowerCase()==checklistName.toLowerCase()){
-              return objCheckList;
-         }
-        })
-      })
-    }
-  }
-
-
-}
-
 var testme = function(){
 			console.log("testme function");
 			console.log($rootScope);
 		}
+
 
 
 	return{
@@ -325,7 +333,9 @@ var testme = function(){
     updateTrelloProject: updateTrelloProject,
     Milestone: Milestone,
     parseDMY: parseDMY,
-    getNamedChecklistFromCard: getNamedChecklistFromCard
+    shortUKDate: shortUKDate,
+    addWorkingDaysToDate: addWorkingDaysToDate,
+    getDateFromUKFormatString: getDateFromUKFormatString
 		//---
 	}
 });
