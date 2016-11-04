@@ -27,7 +27,9 @@ function splitPipeObject(object,format,promiseToResolve){
     for(var i=0;i<myKeys.length;i++){
         myObject[myKeys[i]]=myVals[i];
     }
-    promiseToResolve.resolve(myObject);
+    if(promiseToResolve){
+        promiseToResolve.resolve(myObject);
+    }else{return myObject;}
 }
 
 //Generic Parsing function for Checklists from a card... 
@@ -47,41 +49,42 @@ function parseChecklist(card,checklistName,listItemFormat,promiseToResolve){
                     var listItemProperties = $q.defer();
                     listItemProperties.promise
                         .then(function(properties){
-                            myListObject = properties;
-                            myChecklist.push(myListObject);
+                            //myListObject = properties;
+                            //myChecklist.push(myListObject.data);
                         })
                     splitPipeObject(response[n].checkItems[i].name,listItemFormat,listItemProperties);
+                    return myChecklist;
                 }
             }
         }
     })
     .then(function(checklist){
-        promiseToResolve.resolve(myChecklist);
+        promiseToResolve.resolve({lists:["hello","world"]});
     })
 }
 
 //Generic Parsing function for a list of cards with checklists...
+//take a list of cards, (card names may be pipe separated)
+//push card details into an array, for each card
 
 function parseChecklistsFromCardList(cardList,cardNameFormat,checklist,listName,listItemFormat,promiseToResolve){
-    var myArrayOfObjects=[];
-    var myObject = {};
+    var myArrayOfCards=[];
     for(var m=0;m<cardList.length;m++){
+        //var myCard = {};
+        //Split card.name into properties using "cardNameFormat" and use them to extend our card object
+        var myCard = splitPipeObject(cardList[m].name,cardNameFormat);
+        console.log('myCard=');
+        console.log(myCard);
         var objectProperties = $q.defer();
         objectProperties.promise
             .then(function(properties){
-                //I should be able to do these two promises in one hit
-                myObject=properties;
-                myArrayOfObjects.push(myObject);
+                console.log(properties);
+                angular.extend(myCard,properties);
+                myArrayOfCards.push(myCard);
             })
-        splitPipeObject(cardList[m].name,cardNameFormat,objectProperties);
-        var objCard = $q.defer();
-        objCard.promise
-            .then(function(cardlist){
-                myArrayOfObjects[m][listName] = cardlist;
-            })
-        parseChecklist(cardList[m],checklist,listItemFormat,objCard);
+        parseChecklist(cardList[m],checklist,listItemFormat,objectProperties);
     }
-    promiseToResolve.resolve(myArrayOfObjects);
+    promiseToResolve.resolve(myArrayOfCards);
 }
 
 $scope.trelloconfig={
