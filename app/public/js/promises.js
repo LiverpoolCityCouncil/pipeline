@@ -20,16 +20,21 @@ $scope.trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 //assign the key/value pairs to the object in the promise
 
 
-function splitPipeObject(object,format,promiseToResolve){
+function splitPipeObject(string,format,promiseToResolve){
     var myKeys = format.split("|");
-    var myVals = object.split("|");
+    var myVals = string.split("|");
     var myObject={};
     for(var i=0;i<myKeys.length;i++){
         myObject[myKeys[i]]=myVals[i];
     }
     if(promiseToResolve){
-        promiseToResolve.resolve(myObject);
-    }else{return myObject;}
+        //function has been passed a 3rd parameter, so we resolve a promise
+            promiseToResolve.resolve(myObject);
+    }
+    else
+    {
+        return myObject;
+    }
 }
 
 //Generic Parsing function for Checklists from a card... 
@@ -38,28 +43,43 @@ function splitPipeObject(object,format,promiseToResolve){
 //along with a promise to resolve with the result.
 //Builds an array of values and passes that array into the promise
 
-function parseChecklist(card,checklistName,listItemFormat,promiseToResolve){
+function parseChecklist(card,checklistName,listItemFormat,cardToExtend,promiseToResolve){
     var myChecklist = [];
     $http.get("https://trello.com/1/cards/"+card.id+"/checklists?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
     .success(function(response){
         for(var n=0;n<response.length;n++){
+            //Identify the checklist whose items we're after
             if(response[n].name==checklistName){
+                //iterate the checklist's checkItems array
                 for(var i=0;i<response[n].checkItems.length;i++){
                     var myListObject={};
-                    var listItemProperties = $q.defer();
+                    //var listItemProperties = $q.defer();
+                    myChecklist.push(splitPipeObject(response[n].checkItems[i].name,listItemFormat));
+                    console.log(myChecklist);
+/*
+                    //create a promise: when we have all the 
                     listItemProperties.promise
                         .then(function(properties){
-                            //myListObject = properties;
-                            //myChecklist.push(myListObject.data);
+                            myListObject = properties;
+                            myChecklist.push(myListObject);
+                            return myChecklist;
                         })
-                    splitPipeObject(response[n].checkItems[i].name,listItemFormat,listItemProperties);
+                    splitPipeObject(
+                    //We're looking here at a checklist Item - we want to push the item into an array of items
+                    response[n].checkItems[i].name, // the checkItem's name
+                    listItemFormat,                 // the format (passed in from the calling function)
+                    listItemProperties             // the promise we want to resolve
+                    ); 
                     return myChecklist;
+*/
                 }
             }
         }
+        return myChecklist;
+        
     })
-    .then(function(checklist){
-        promiseToResolve.resolve({lists:["hello","world"]});
+    .then(function(myChecklist){
+        promiseToResolve.resolve(cardToExtend,myChecklist);
     })
 }
 
@@ -70,19 +90,18 @@ function parseChecklist(card,checklistName,listItemFormat,promiseToResolve){
 function parseChecklistsFromCardList(cardList,cardNameFormat,checklist,listName,listItemFormat,promiseToResolve){
     var myArrayOfCards=[];
     for(var m=0;m<cardList.length;m++){
-        //var myCard = {};
-        //Split card.name into properties using "cardNameFormat" and use them to extend our card object
+        //split the name of the card into object properties by format
+        //create the card with these properties
         var myCard = splitPipeObject(cardList[m].name,cardNameFormat);
-        console.log('myCard=');
-        console.log(myCard);
+        //Add the array of properties from the specified checklist to this object
+        //then add this object to the array of cards
         var objectProperties = $q.defer();
         objectProperties.promise
-            .then(function(properties){
-                console.log(properties);
-                angular.extend(myCard,properties);
-                myArrayOfCards.push(myCard);
+            .then(function(cardToExtend,properties){
+                angular.extend(cardToExtend,properties);
+                myArrayOfCards.push(cardToExtend);
             })
-        parseChecklist(cardList[m],checklist,listItemFormat,objectProperties);
+        parseChecklist(cardList[m],checklist,listItemFormat,myCard,objectProperties);
     }
     promiseToResolve.resolve(myArrayOfCards);
 }
@@ -112,11 +131,11 @@ authorised.promise
                     .then(function(boards){
                         $scope.boards=boards;
                     })
-                parseChecklistsFromCardList(response,"name|id","Lists","lists","name|id",objBoardList);
+                parseChecklistsFromCardList(response,"name|id","Lists","lists","name|id|show",objBoardList);
             })
             
     })
-    .then(function(config){
+    /*.then(function(config){
         //Get Teams
         $http.get("https://trello.com/1/lists/"+$scope.trelloconfig.teams+"/cards?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
             .success(function(response){
@@ -128,7 +147,7 @@ authorised.promise
                 parseChecklistsFromCardList(response,"name","Members","members","name",objTeamList);
 
         })
-    })
+    })*/
 
 $scope.trelloToken=localStorage.getItem('trello_token');
   $http.get("https://trello.com/1/tokens/"+$scope.trelloToken+"/member?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
