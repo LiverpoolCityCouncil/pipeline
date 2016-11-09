@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html ng-app="promises" ng-controller="PromiseCtrl">
+<html ng-app="pipeline" ng-controller="PromiseCtrl">
 <head>
   <script src="js/md5.js"></script>
   <script src="js/avatar.js"></script>
@@ -13,15 +13,9 @@
     <script src="js/satellizer.js"></script>
     <script src="js/angular-trello-api-client.js"></script>
   <!--My modules-->   
-    <script src="js/app(refactor1).js"></script>
-    <script src="js/rootscope_functions.js"></script>
-    <script src="js/assignProjectCtrl.js"></script>
-    <script src="js/assignStaffCtrl.js"></script>
-    <script src="js/boardCtrl.js"></script>
-    <script src="js/editAssignmentCtrl.js"></script>
-    <script src="js/editProjectCtrl.js"></script>
-    <script src="js/addMilestoneCtrl.js"></script>
     <script src="js/promises.js"></script>
+    <script src="js/rootscope_functions.js"></script>
+
     
 
 </head>
@@ -30,8 +24,10 @@
  <div>
 <h2>Progress...{{member.fullName}}</h2>
 <p>I need a trellotoken in order to proceed, do I have one? {{trelloToken}}</p>
-<p>Once I have a trellotoken, I can go get the config {{boards}}</p>
-<p>Once I have the config, then I can go get the staff {{teams}}</p>
+<p><strong>Once I have a trellotoken, I can go get the config :<br></strong>{{boards}}</p>
+<p><strong>Once I have the config, then I can go get the teams:<br> </strong>{{teams}}</p>
+<p><strong>Once I have the teams, I can build the staff object:<br></strong>{{staff}}</p>
+<p><strong>Once I have the staff, I can build the projects object:<br></strong>{{projects}}</p>
  </div> 
  </div>
 </body>

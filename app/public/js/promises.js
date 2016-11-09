@@ -1,5 +1,5 @@
 'use strict';
-angular.module('promises',['ngRoute','satellizer','trello-api-client'])
+var pipeline=angular.module('pipeline',['ngRoute','satellizer','trello-api-client'])
 
 .config(function(TrelloClientProvider){
     TrelloClientProvider.init({
@@ -10,7 +10,7 @@ angular.module('promises',['ngRoute','satellizer','trello-api-client'])
     });
   })
 
-.controller('PromiseCtrl', function($scope,$http, $q, $timeout) {
+.controller('PromiseCtrl', function($scope,$http, $q, $timeout,TrelloClient,UIFunctions) {
    
 
 $scope.trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
@@ -29,7 +29,7 @@ function splitPipeObject(string,format,promiseToResolve){
     }
     if(promiseToResolve){
         //function has been passed a 3rd parameter, so we resolve a promise
-            promiseToResolve.resolve(myObject);
+        promiseToResolve.resolve(myObject);
     }
     else
     {
@@ -48,30 +48,23 @@ function parseChecklist(card,checklistName,listItemFormat,cardToExtend,listName,
     $http.get("https://trello.com/1/cards/"+card.id+"/checklists?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
     .success(function(response){
         for(var n=0;n<response.length;n++){
-            //console.log("iterating checklists")
             //Identify the checklist whose items we're after
             if(response[n].name==checklistName){
-                //console.log("found the checklist we want ("+ checklistName +")")
                 //iterate the checklist's checkItems array
                 for(var i=0;i<response[n].checkItems.length;i++){
-                    //console.log("iterating the checklist items")
                     var myListObject={};
-                    //var listItemProperties = $q.defer();
-                    //console.log("creating an object by splitting the name value at |");
-                    myListObject=splitPipeObject(response[n].checkItems[i].name,listItemFormat);
-                    //console.log(myListObject);
-                    //console.log("pushing that object into an array")
-                    myChecklist.push(myListObject);
-                    //console.log(myChecklist);
+                    if(response[n].checkItems[i].state=='incomplete'){
+                        myListObject=splitPipeObject(response[n].checkItems[i].name,listItemFormat);
+                        myChecklist.push(myListObject);
+                    }
                 }
+                //we've found the list we want, stop iterating.
                 break;  
             }
-        }   
+        }  
+        //add the checklist to the card
         cardToExtend[listName]=myChecklist;        
         promiseToResolve.resolve(cardToExtend);      
-    })
-    .then(function(myChecklist,listName,cardToExtend){
-        
     })
 }
 
@@ -85,8 +78,6 @@ function parseChecklistsFromCardList(cardList,cardNameFormat,checklist,listName,
         //split the name of the card into object properties by format
         //create the card with these properties
         var myCard = splitPipeObject(cardList[m].name,cardNameFormat);
-        //Add the array of properties from the specified checklist to this object
-        //then add this object to the array of cards
         var objectProperties = $q.defer();
         objectProperties.promise
             .then(function(card){
@@ -102,8 +93,10 @@ $scope.trelloconfig={
     projectBoards:"55dc3f991aa96888e248b54a",
     teams:"55dc7476c84945317bb853b9"
 };
+//TrelloClient.authenticate();
 $scope.boards=[];
 $scope.teams=[];
+$scope.projects=[];
 $scope.trelloToken="waiting";
 $scope.config="Waiting";
 $scope.staff="Waiting";
@@ -112,7 +105,7 @@ var authorised = $q.defer();
 
 //Get Config & Staff Data once authorised
 authorised.promise
-    .then(function (member){
+    .then(function(member){
         $scope.member = member;
         //Get Boards
         $http.get("https://trello.com/1/lists/"+$scope.trelloconfig.projectBoards+"/cards?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
@@ -136,8 +129,17 @@ authorised.promise
                         $scope.teams=teams;
                     })
                 parseChecklistsFromCardList(response,"name","Members","members","name",objTeamList);
-
         })
+    })
+    .then(function(){
+        //Build board Object
+        // - Q: Do I actually need a separate staff object? - would it not be quicker to just add assignments to the existing staff in the Teams object
+        // - A: YES! we do. We build a staff object for each board, because not all staff may have access to all boards.
+        // - Maybe it would be better to add staff & projects arrays to $scope.boards, allowing us to build the array asynchronously 
+        // (starting with the default board)
+
+        
+        
     })
 
 $scope.trelloToken=localStorage.getItem('trello_token');
