@@ -1,5 +1,5 @@
 'use strict';
-var pipeline=angular.module('pipeline',['ngRoute','satellizer','trello-api-client'])
+var pipeline=angular.module('pipeline',['ngLodash','ngRoute','satellizer','trello-api-client'])
 
 .config(function(TrelloClientProvider){
     TrelloClientProvider.init({
@@ -10,9 +10,9 @@ var pipeline=angular.module('pipeline',['ngRoute','satellizer','trello-api-clien
     });
   })
 
-.controller('PromiseCtrl', function($scope,$http, $q, $timeout,TrelloClient,UIFunctions) {
+.controller('PromiseCtrl', function($scope,$http, $q, $timeout,TrelloClient,UIFunctions,lodash) {
    
-
+$scope.status=0;
 $scope.trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 
 //Split a pipe delimited string into a number of values
@@ -63,7 +63,8 @@ function parseChecklist(card,checklistName,listItemFormat,cardToExtend,listName,
             }
         }  
         //add the checklist to the card
-        cardToExtend[listName]=myChecklist;        
+        cardToExtend[listName]=myChecklist; 
+        cardToExtend.labels=card.labels;       
         promiseToResolve.resolve(cardToExtend);      
     })
 }
@@ -114,8 +115,9 @@ authorised.promise
                 objBoardList.promise
                     .then(function(boards){
                         $scope.boards=boards;
+                        $scope.status ++;
                     })
-                parseChecklistsFromCardList(response,"name|id","Lists","lists","name|id|show",objBoardList);
+                parseChecklistsFromCardList(response,"name|id","Lists","lists","name|id|show",objBoardList);//would be good to pass a "check for default" function in here too
             })
             
     })
@@ -127,25 +129,41 @@ authorised.promise
                 objTeamList.promise
                     .then(function(teams){
                         $scope.teams=teams;
+                        $scope.status++;
                     })
                 parseChecklistsFromCardList(response,"name","Members","members","name",objTeamList);
         })
     })
-    .then(function(){
-        //Build board Object
-        // - Q: Do I actually need a separate staff object? - would it not be quicker to just add assignments to the existing staff in the Teams object
-        // - A: YES! we do. We build a staff object for each board, because not all staff may have access to all boards.
-        // - Maybe it would be better to add staff & projects arrays to $scope.boards, allowing us to build the array asynchronously 
-        // (starting with the default board)
 
-        
-        
+    $scope.$watch("status==3",function(){
+        for (var board=0;board<$scope.boards.length;board++){
+            $http.get("https://trello.com/1/boards/"+$scope.boards[board].id+"/members?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
+                .success(function(response){
+                      response.forEach(function(person){
+                        $http.get("https://trello.com/1/members/"+person.id+"/avatarhash?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
+                        .success(function(response){
+                            if(response._value){
+                              var avatarImg = "https://trello-avatars.s3.amazonaws.com/"+response._value+"/50.png";
+                            }
+                            else
+                            {
+                              var avatarImg = "/img/1x1transparent.png";
+                            }
+                              var userNameMatch = '@'+person.username;
+                              var team = lodash.find($scope.teams,{members:[userNameMatch]});
+                              var sm = new UIFunctions.StaffMember(person.fullName,person.id,userNameMatch,avatarImg,team.name);
+                              $scope.boards[board].staff.push(sm);
+                        });
+                      });
+                });
+        }
     })
 
 $scope.trelloToken=localStorage.getItem('trello_token');
   $http.get("https://trello.com/1/tokens/"+$scope.trelloToken+"/member?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
     .success(function(member){
         authorised.resolve(member);
+        $scope.status++;
     });
     
 });
