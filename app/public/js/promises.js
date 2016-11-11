@@ -95,9 +95,13 @@ $scope.trelloconfig={
     teams:"55dc7476c84945317bb853b9"
 };
 //TrelloClient.authenticate();
-$scope.boards=[];
-$scope.teams=[];
-$scope.projects=[];
+//$scope.boards=[];
+//$scope.teams=[];
+$scope.appStatus={
+    authorised:false,
+    teams:false,
+    boards:false
+};
 $scope.trelloToken="waiting";
 $scope.config="Waiting";
 $scope.staff="Waiting";
@@ -115,7 +119,7 @@ authorised.promise
                 objBoardList.promise
                     .then(function(boards){
                         $scope.boards=boards;
-                        $scope.status ++;
+                        //$scope.status=2;
                     })
                 parseChecklistsFromCardList(response,"name|id","Lists","lists","name|id|show",objBoardList);//would be good to pass a "check for default" function in here too
             })
@@ -129,42 +133,44 @@ authorised.promise
                 objTeamList.promise
                     .then(function(teams){
                         $scope.teams=teams;
-                        $scope.status++;
+                        //$scope.status=3;
                     })
                 parseChecklistsFromCardList(response,"name","Members","members","name",objTeamList);
         })
     })
 
-    $scope.$watch("status==3",function(){
-        for (var board=0;board<$scope.boards.length;board++){
-            $http.get("https://trello.com/1/boards/"+$scope.boards[board].id+"/members?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
-                .success(function(response){
-                      response.forEach(function(person){
-                        $http.get("https://trello.com/1/members/"+person.id+"/avatarhash?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
-                        .success(function(response){
-                            if(response._value){
-                              var avatarImg = "https://trello-avatars.s3.amazonaws.com/"+response._value+"/50.png";
-                            }
-                            else
-                            {
-                              var avatarImg = "/img/1x1transparent.png";
-                            }
-                              var userNameMatch = '@'+person.username;
-                              var team = lodash.find($scope.teams,{members:[userNameMatch]});
-                              var sm = new UIFunctions.StaffMember(person.fullName,person.id,userNameMatch,avatarImg,team.name);
-                              $scope.boards[board].staff.push(sm);
-                        });
-                      });
-                });
-        }
-    })
+$scope.$watch('boards',function(newValue,oldValue,scope){
+  if(Array.isArray(newValue)&& !Array.isArray(oldValue))
+  {
+      $scope.appStatus.boards='built';
+  }
+
+},true)
+
+$scope.$watch('teams',function(newValue,oldValue,scope){
+  if(Array.isArray(newValue) && !Array.isArray(oldValue))
+  {
+        $scope.appStatus.teams='built';
+  }
+})
+
+$scope.$watch('appStatus',function(newValue,oldValue,scope){
+    console.log(newValue);
+  if(newValue.boards=='built'){
+      if(newValue.teams=='built'){
+      //we have both board & team objects, so we can proceed
+      console.log($scope.boards);
+      //console.log($scope.boards.length);
+      console.log($scope.teams);
+      }
+  }
+},true)
 
 $scope.trelloToken=localStorage.getItem('trello_token');
   $http.get("https://trello.com/1/tokens/"+$scope.trelloToken+"/member?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
     .success(function(member){
         authorised.resolve(member);
-        $scope.status++;
+        $scope.appStatus.authorised=true;
     });
-    
 });
 
