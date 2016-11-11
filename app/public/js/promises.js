@@ -83,10 +83,13 @@ function parseChecklistsFromCardList(cardList,cardNameFormat,checklist,listName,
         objectProperties.promise
             .then(function(card){
                 myArrayOfCards.push(card);
+                if(myArrayOfCards.length == cardList.length){
+                    promiseToResolve.resolve(myArrayOfCards);
+                }
             })
         parseChecklist(cardList[m],checklist,listItemFormat,myCard,listName,objectProperties);
     }
-    promiseToResolve.resolve(myArrayOfCards);
+    
 }
 
 $scope.trelloconfig={
@@ -140,7 +143,7 @@ authorised.promise
     })
 
 $scope.$watch('boards',function(newValue,oldValue,scope){
-  if(Array.isArray(newValue)&& !Array.isArray(oldValue))
+  if(Array.isArray(newValue) && !Array.isArray(oldValue))
   {
       $scope.appStatus.boards='built';
   }
@@ -158,10 +161,31 @@ $scope.$watch('appStatus',function(newValue,oldValue,scope){
     console.log(newValue);
   if(newValue.boards=='built'){
       if(newValue.teams=='built'){
-      //we have both board & team objects, so we can proceed
-      console.log($scope.boards);
-      //console.log($scope.boards.length);
-      console.log($scope.teams);
+          //we have both board & team objects, so we can proceed
+                for (var board=0;board<$scope.boards.length;board++){
+                $http.get("https://trello.com/1/boards/"+$scope.boards[board].id+"/members?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
+                    .success(function(response){
+                          response.forEach(function(person){
+                            $http.get("https://trello.com/1/members/"+person.id+"/avatarhash?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
+                            .success(function(response){
+                                if(response._value){
+                                  var avatarImg = "https://trello-avatars.s3.amazonaws.com/"+response._value+"/50.png";
+                                }
+                                else
+                                {
+                                  var avatarImg = "/img/1x1transparent.png";
+                                }
+                                  
+                                  //this isn't working - can't resolve the new array of objects (the below code is looking for a text value in an array)
+
+                                  var userNameMatch = '@'+person.username;
+                                  var team = lodash.find($scope.teams,function(o){return name == userNameMatch;});
+                                  var sm = new UIFunctions.StaffMember(person.fullName,person.id,userNameMatch,avatarImg,team.name);
+                                  $scope.boards[board].staff.push(sm);
+                            });
+                          });
+                    });
+            }
       }
   }
 },true)
