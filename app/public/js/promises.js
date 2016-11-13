@@ -7,8 +7,8 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
         scope: ['read', 'write', 'account'],
     });
 }).controller('PromiseCtrl', function($scope, $http, $q, $timeout, TrelloClient, UIFunctions, lodash) {
-    $scope.status = 0;
     $scope.trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
+
     //Split a pipe delimited string into a number of values
     //assign those values to keys specified by a pipe deimited format string
     //assign the key/value pairs to the object in the promise
@@ -83,6 +83,7 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
     //$scope.boards=[];
     //$scope.teams=[];
     $scope.appStatus = {
+        index:0,
         authorised: false,
         teams: false,
         boards: false,
@@ -120,23 +121,25 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
     $scope.$watch('boards', function(newValue, oldValue, scope) {
         if (Array.isArray(newValue) && !Array.isArray(oldValue)) {
             $scope.appStatus.boards = 'built';
+            $scope.appStatus.index++;
         }
     }, true)
     $scope.$watch('teams', function(newValue, oldValue, scope) {
         if (Array.isArray(newValue) && !Array.isArray(oldValue)) {
             $scope.appStatus.teams = 'built';
+            $scope.appStatus.index++;
         }
     })
 
     //Main Application Flow here - checks 'appStatus' variable for readiness to move on.
-    
+
     $scope.$watch('appStatus', function(newValue, oldValue, scope) {
         console.log(newValue);
         if (newValue.boards == 'built' && newValue.teams == 'built' && !newValue.staff) {
-            //we have both board & team objects, so we can proceed
+            //we have both board & team objects, so we can proceed to build the staff object
             for (var board = 0; board < $scope.boards.length; board++) {
                 $scope.boards[board].staff = [];
-                console.log($scope.boards[board]);
+                //console.log($scope.boards[board]);
                 $http.get("https://trello.com/1/boards/" + $scope.boards[board].id + "/members?key=" + $scope.trelloKey + "&token=" + $scope.trelloToken).success(function(response) {
                     var staffCount = 0;
                     response.forEach(function(person) {
@@ -159,6 +162,7 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
                         staffCount++;
                         if(staffCount == response.length){
                             $scope.appStatus.staff="built";
+                            $scope.appStatus.index++;
                         }
 
                     });
@@ -173,5 +177,6 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
     $http.get("https://trello.com/1/tokens/" + $scope.trelloToken + "/member?key=" + $scope.trelloKey + "&token=" + $scope.trelloToken).success(function(member) {
         authorised.resolve(member);
         $scope.appStatus.authorised = true;
+        $scope.appStatus.index++;
     });
 });
