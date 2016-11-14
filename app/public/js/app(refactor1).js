@@ -687,6 +687,17 @@ if(localStorage.getItem('trello_token')){
 
 });
 
+/*
+ ####### ### #       ####### ####### ######   #####  
+ #        #  #          #    #       #     # #     # 
+ #        #  #          #    #       #     # #       
+ #####    #  #          #    #####   ######   #####  
+ #        #  #          #    #       #   #         # 
+ #        #  #          #    #       #    #  #     # 
+ #       ### #######    #    ####### #     #  #####  
+                                                     
+*/
+
 pipeline.filter('validLabels',function($rootScope){
   return function (items) {
     var filtered =[];
