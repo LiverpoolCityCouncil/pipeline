@@ -1,12 +1,12 @@
 'use strict';
-var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 'trello-api-client']).config(function(TrelloClientProvider) {
+var pipeline = angular.module('pipeline', ['ngLodash','ui.bootstrap','ngCookies','ngRoute','satellizer','trello-api-client']).config(function(TrelloClientProvider) {
     TrelloClientProvider.init({
         key: 'c21f0af5b9c290981a03256a73f5c5fa',
         appName: 'Pipeline',
         tokenExpiration: 'never',
         scope: ['read', 'write', 'account'],
     });
-}).controller('PromiseCtrl', function($scope, $http, $q, $timeout, TrelloClient, UIFunctions, lodash) {
+}).controller('PromiseCtrl', function($scope,$rootScope, $q, lodash, $window,$route, $cookieStore, $http, UIFunctions,TrelloClient) {
     $scope.trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 
     //Split a pipe delimited string into a number of values
@@ -74,14 +74,26 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
             parseChecklist(cardList[m], checklist, listItemFormat, myCard, listName, objectProperties);
         }
     }
+
+    var getCards =function getCards(arrList){
+    //get cards
+      for(var n = 0;n < arrList.length;n++){
+          $http.get("https://trello.com/1/lists/"+arrList[n].id+"/cards?key="+trelloKey+"&token="+$rootScope.trelloToken)
+      .success(buildProjectsObject);
+      }
+    }
+
+    var buildProjectsObject = function(response){
+        parseCards(response,UIFunctions.parseStaffAssignments);
+    }
+
+
     $scope.trelloconfig = {
         boardID: "QUYFKlKu",
         projectBoards: "55dc3f991aa96888e248b54a",
         teams: "55dc7476c84945317bb853b9"
     };
-    //TrelloClient.authenticate();
-    //$scope.boards=[];
-    //$scope.teams=[];
+
     $scope.appStatus = {
         index:0,
         authorised: false,
@@ -90,9 +102,7 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
         staff:false,
         projects:false
     };
-    $scope.trelloToken = "waiting";
-    $scope.config = "Waiting";
-    $scope.staff = "Waiting";
+
     var authorised = $q.defer();
     //Get Config & Staff Data once authorised
     authorised.promise.then(function(member) {
@@ -164,13 +174,24 @@ var pipeline = angular.module('pipeline', ['ngLodash', 'ngRoute', 'satellizer', 
                             $scope.appStatus.staff="built";
                             $scope.appStatus.index++;
                         }
-
                     });
                 });
             }
         }
-        if(newValue.staff){
+        if(newValue.staff && !newValue.projects){
+            //ready to build projects object
             console.log("we can build projects now");
+            for(var n=0;n<$scope.boards.length;n++){
+                for(var i=0;i<$scope.boards[n].lists.length;i++){
+                    console.log($scope.boards[n].lists[i].id);
+                    var tmpArray=[];
+                    $http.get("https://trello.com/1/lists/"+$scope.boards[n].lists[i].id+"/cards?key="+$scope.trelloKey+"&token="+$scope.trelloToken)
+                        .success(function(response){
+
+                    });
+                   
+                }
+            }
         }
     }, true)
     $scope.trelloToken = localStorage.getItem('trello_token');
