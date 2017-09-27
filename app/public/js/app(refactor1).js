@@ -57,7 +57,7 @@ var trelloKey = "c21f0af5b9c290981a03256a73f5c5fa";
 $scope.teams = [
 {
   name:'UX',
-  members:['@oddjones','@chatmandu','@leeeaseman','@jayneedwards','@markallen16'],
+  members:['@oddjones','@chatmandu','@leeeaseman','@jayneedwards','@markallen16','@estherlazenby'],
   show:true
 },
 {
@@ -77,7 +77,7 @@ $scope.teams = [
 },
 {
   name:'Internal Comms',
-  members:['@catherineakins','@gemmafirr','@kerryglazier'],
+  members:['@catherineakins','@gemmafirr','@kerryglazier','@claresmall1'],
   show:true
 },    
 {
