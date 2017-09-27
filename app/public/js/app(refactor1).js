@@ -67,7 +67,7 @@ $scope.teams = [
 },
 {
   name:'Projects',
-  members:['@iangeer','@jamesjennings1','@jonathanglynn','@chrisreynolds2'],
+  members:['@iangeer','@jamesjennings1','@jonathanglynn','@chrisreynolds2','@fionamurray19','@alisondingwall'],
   show:true
 },
 {
@@ -75,6 +75,11 @@ $scope.teams = [
   members:['@andreajones2','@sophiebaines1'],
   show:true
 },
+{
+  name:'Internal Comms',
+  members:['@catherineakins','@gemmafirr','@kerryglazier'],
+  show:true
+},    
 {
   name:'Support',
   members:['@davcoops','@lynchj3','@paullfc','@sheagraffin','@martinatherton1'],
