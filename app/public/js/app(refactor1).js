@@ -535,6 +535,7 @@ var parseCard = function(objCard){
     for(var i=0;i<objCard.idChecklists.length;i++){
       $http.get("https://trello.com/1/checklists/"+objCard.idChecklists[i]+"?key="+trelloKey+"&token="+$rootScope.trelloToken)
       .success(function lookForTimeline(objCheckList){
+          debugger;
         angular.forEach(objCheckList, function extractTimeline(v,k){
           if(k=="name" && v.toLowerCase()=="project timeline"){
             $rootScope.projects[cardIDX-1].timelineID = objCheckList.id;
